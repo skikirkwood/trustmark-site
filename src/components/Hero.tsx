@@ -16,7 +16,7 @@ export default function Hero({ entry }: HeroProps) {
   const subheadline = data.fields.subheadline ? String(data.fields.subheadline) : null;
   const ctaText = data.fields.ctaText ? String(data.fields.ctaText) : null;
   const ctaLink = data.fields.ctaLink ? String(data.fields.ctaLink) : null;
-  const contentPosition = data.fields.contentPosition || 'left';
+  const contentPosition = data.fields.contentPosition ? String(data.fields.contentPosition) : 'left';
   const isRight = contentPosition === 'right';
 
   return (
