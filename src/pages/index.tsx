@@ -1,4 +1,4 @@
-import { GetStaticProps } from 'next';
+import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { getPageBySlug } from '@/lib/contentful';
 import { ModuleEntry, NavigationEntry, FooterEntry } from '@/types/contentful';
@@ -73,14 +73,16 @@ export default function HomePage({ page, preview }: HomePageProps) {
   );
 }
 
-export const getStaticProps: GetStaticProps<HomePageProps> = async ({ preview = false }) => {
-  const page = await getPageBySlug('home', preview);
+export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({ query, preview = false }) => {
+  // Enable preview mode if query param is present or Next.js preview mode is active
+  const isPreview = preview || query.preview === 'true';
+  
+  const page = await getPageBySlug('home', isPreview);
 
   return {
     props: {
       page: page || null,
-      preview,
+      preview: isPreview,
     },
-    revalidate: 60, // Revalidate every 60 seconds (ISR)
   };
 };

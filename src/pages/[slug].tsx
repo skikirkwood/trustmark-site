@@ -1,6 +1,6 @@
-import { GetStaticProps, GetStaticPaths } from 'next';
+import { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import { getPageBySlug, getAllPages } from '@/lib/contentful';
+import { getPageBySlug } from '@/lib/contentful';
 import { ModuleEntry, NavigationEntry, FooterEntry } from '@/types/contentful';
 import { Navigation, Footer, ModuleRenderer } from '@/components';
 
@@ -60,24 +60,13 @@ export default function Page({ page, preview }: PageProps) {
   );
 }
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const pages = await getAllPages();
-  
-  const paths = pages
-    .filter((page: any) => page.fields.slug !== 'home') // Exclude home page (handled by index.tsx)
-    .map((page: any) => ({
-      params: { slug: page.fields.slug },
-    }));
-
-  return {
-    paths,
-    fallback: 'blocking', // Generate pages on-demand if not pre-rendered
-  };
-};
-
-export const getStaticProps: GetStaticProps<PageProps> = async ({ params, preview = false }) => {
+export const getServerSideProps: GetServerSideProps<PageProps> = async ({ params, query, preview = false }) => {
   const slug = params?.slug as string;
-  const page = await getPageBySlug(slug, preview);
+  
+  // Enable preview mode if query param is present or Next.js preview mode is active
+  const isPreview = preview || query.preview === 'true';
+  
+  const page = await getPageBySlug(slug, isPreview);
 
   if (!page) {
     return {
@@ -88,8 +77,7 @@ export const getStaticProps: GetStaticProps<PageProps> = async ({ params, previe
   return {
     props: {
       page,
-      preview,
+      preview: isPreview,
     },
-    revalidate: 60,
   };
 };
