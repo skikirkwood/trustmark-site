@@ -1,6 +1,7 @@
-import { GetServerSideProps } from 'next';
+import { GetStaticProps, GetStaticPaths } from 'next';
 import Head from 'next/head';
-import { getPageBySlug } from '@/lib/contentful';
+import { useContentfulLiveUpdates } from '@contentful/live-preview/react';
+import { getPageBySlug, getAllPages } from '@/lib/contentful';
 import { ModuleEntry, NavigationEntry, FooterEntry } from '@/types/contentful';
 import { Navigation, Footer, ModuleRenderer } from '@/components';
 
@@ -10,7 +11,10 @@ interface PageProps {
   preview: boolean;
 }
 
-export default function Page({ page, preview }: PageProps) {
+export default function Page({ page: initialPage, preview }: PageProps) {
+  // Subscribe to live updates from Contentful
+  const page = useContentfulLiveUpdates(initialPage);
+  
   if (!page) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
@@ -60,13 +64,26 @@ export default function Page({ page, preview }: PageProps) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps<PageProps> = async ({ params, query, preview = false }) => {
+export const getStaticPaths: GetStaticPaths = async () => {
+  const pages = await getAllPages();
+  
+  const paths = pages
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .filter((page: any) => page.fields.slug !== 'home')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .map((page: any) => ({
+      params: { slug: page.fields.slug },
+    }));
+
+  return {
+    paths,
+    fallback: 'blocking',
+  };
+};
+
+export const getStaticProps: GetStaticProps<PageProps> = async ({ params, preview = false }) => {
   const slug = params?.slug as string;
-  
-  // Enable preview mode if query param is present or Next.js preview mode is active
-  const isPreview = preview || query.preview === 'true';
-  
-  const page = await getPageBySlug(slug, isPreview);
+  const page = await getPageBySlug(slug, preview);
 
   if (!page) {
     return {
@@ -77,7 +94,8 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({ params
   return {
     props: {
       page,
-      preview: isPreview,
+      preview,
     },
+    revalidate: 5,
   };
 };

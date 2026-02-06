@@ -32,11 +32,13 @@ export const getClient = (preview: boolean = false) =>
   preview ? getPreviewClient() : getDeliveryClient();
 
 // Fetch page by slug
+// NOTE: Use include: 10 to resolve all nested links - this preserves
+// the data structure that useContentfulLiveUpdates needs to track updates
 export async function getPageBySlug(slug: string, preview: boolean = false) {
   const entries = await getClient(preview).getEntries({
     content_type: 'page',
     'fields.slug': slug,
-    include: 3,
+    include: 10,
   });
   return entries.items[0] || null;
 }

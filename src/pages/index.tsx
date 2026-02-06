@@ -1,5 +1,6 @@
-import { GetServerSideProps } from 'next';
+import { GetStaticProps } from 'next';
 import Head from 'next/head';
+import { useContentfulLiveUpdates } from '@contentful/live-preview/react';
 import { getPageBySlug } from '@/lib/contentful';
 import { ModuleEntry, NavigationEntry, FooterEntry } from '@/types/contentful';
 import { Navigation, Footer, ModuleRenderer } from '@/components';
@@ -10,7 +11,10 @@ interface HomePageProps {
   preview: boolean;
 }
 
-export default function HomePage({ page, preview }: HomePageProps) {
+export default function HomePage({ page: initialPage, preview }: HomePageProps) {
+  // Subscribe to live updates from Contentful
+  const page = useContentfulLiveUpdates(initialPage);
+  
   if (!page) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
@@ -73,16 +77,14 @@ export default function HomePage({ page, preview }: HomePageProps) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({ query, preview = false }) => {
-  // Enable preview mode if query param is present or Next.js preview mode is active
-  const isPreview = preview || query.preview === 'true';
-  
-  const page = await getPageBySlug('home', isPreview);
+export const getStaticProps: GetStaticProps<HomePageProps> = async ({ preview = false }) => {
+  const page = await getPageBySlug('home', preview);
 
   return {
     props: {
       page: page || null,
-      preview: isPreview,
+      preview,
     },
+    revalidate: 5, // Short revalidation for quick updates
   };
 };
