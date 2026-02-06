@@ -50,6 +50,7 @@ export interface HeroFields {
   backgroundImage?: ContentfulAsset;
   ctaText?: string;
   ctaLink?: string;
+  contentPosition?: 'left' | 'right';
 }
 
 export interface HeroSkeleton extends EntrySkeletonType {
