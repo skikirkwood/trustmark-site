@@ -48,7 +48,7 @@ export default function Hero({ entry }: HeroProps) {
           
           {subheadline && (
             <p 
-              className="text-sm md:text-base text-white/80 mb-6 font-light"
+              className="text-2xl md:text-3xl lg:text-4xl text-white/80 mb-6 font-light leading-tight"
               {...inspectorProps({ fieldId: 'subheadline' })}
             >
               {subheadline}
