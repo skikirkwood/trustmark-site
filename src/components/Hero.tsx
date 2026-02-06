@@ -33,10 +33,10 @@ export default function Hero({ entry }: HeroProps) {
       <div className={`relative z-10 h-full min-h-[400px] md:min-h-[500px] lg:min-h-[550px] flex items-center ${isRight ? 'justify-end pr-4 sm:pr-6 md:pr-8 lg:pr-12' : 'justify-start pl-4 sm:pl-6 md:pl-8 lg:pl-12'}`}>
         {/* Blue Overlay Box - extends from screen edge */}
         <div 
-          className={`bg-[#003366] py-10 md:py-14 lg:py-16 w-[85%] sm:w-[380px] md:w-[420px] lg:w-[480px] ${
+          className={`bg-[#003366] py-10 md:py-14 lg:py-16 w-[85%] sm:w-[380px] md:w-[420px] lg:w-[480px] text-center px-4 sm:px-8 md:px-12 ${
             isRight 
-              ? 'pl-8 md:pl-12 pr-4 sm:pr-8 md:pr-12 rounded-l-lg' 
-              : 'pr-8 md:pr-12 pl-4 sm:pl-8 md:pl-12 rounded-r-lg'
+              ? 'rounded-l-lg' 
+              : 'rounded-r-lg'
           }`}
         >
           <h1 
