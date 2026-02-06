@@ -30,7 +30,7 @@ function NavItem({ item, isMobile }: NavItemProps) {
     return (
       <Link
         href={link}
-        className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors font-medium"
+        className="bg-[#001a33] text-white px-6 py-2.5 rounded-full hover:bg-[#002244] transition-colors font-medium text-sm"
         {...inspectorProps({ fieldId: 'title' })}
       >
         {title}
