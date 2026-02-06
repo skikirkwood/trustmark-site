@@ -1,36 +1,27 @@
-import { GetStaticProps } from 'next';
+import { GetStaticProps, GetStaticPaths } from 'next';
 import Head from 'next/head';
-import { getPageBySlug } from '@/lib/contentful';
+import { getPageBySlug, getAllPages } from '@/lib/contentful';
 import { ModuleEntry, NavigationEntry, FooterEntry } from '@/types/contentful';
 import { Navigation, Footer, ModuleRenderer } from '@/components';
 
-interface HomePageProps {
+interface PageProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   page: any;
   preview: boolean;
 }
 
-export default function HomePage({ page, preview }: HomePageProps) {
+export default function Page({ page, preview }: PageProps) {
   if (!page) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
-        <h1 className="text-2xl font-bold text-gray-900 mb-4">Welcome to Trustmark</h1>
-        <p className="text-gray-600 mb-8">
-          No homepage content found. Please create a Page entry with slug &quot;home&quot; in Contentful.
-        </p>
-        {preview && (
-          <a
-            href="/api/disable-draft"
-            className="text-blue-600 hover:underline"
-          >
-            Exit Preview Mode
-          </a>
-        )}
+        <h1 className="text-2xl font-bold text-gray-900 mb-4">Page Not Found</h1>
+        <p className="text-gray-600">The page you&apos;re looking for doesn&apos;t exist.</p>
       </div>
     );
   }
 
   const title = String(page.fields.title || '');
+  const slug = String(page.fields.slug || '');
   const navigation = page.fields.navigation as NavigationEntry | undefined;
   const modules = (page.fields.modules || []) as ModuleEntry[];
   const footer = page.fields.footer as FooterEntry | undefined;
@@ -39,7 +30,6 @@ export default function HomePage({ page, preview }: HomePageProps) {
     <>
       <Head>
         <title>{title}</title>
-        <meta name="description" content="Banking services, mortgage loans, and wealth management" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -49,7 +39,7 @@ export default function HomePage({ page, preview }: HomePageProps) {
         <div className="fixed bottom-4 right-4 z-50 bg-yellow-400 text-yellow-900 px-4 py-2 rounded-lg shadow-lg flex items-center gap-3">
           <span className="font-medium">Preview Mode</span>
           <a
-            href="/api/disable-draft"
+            href={`/api/disable-draft?redirect=/${slug}`}
             className="text-sm underline hover:no-underline"
           >
             Exit
@@ -58,29 +48,48 @@ export default function HomePage({ page, preview }: HomePageProps) {
       )}
 
       <div className="min-h-screen flex flex-col">
-        {/* Navigation */}
         {navigation && <Navigation entry={navigation} />}
 
-        {/* Main content */}
         <main className="flex-grow">
           <ModuleRenderer modules={modules} />
         </main>
 
-        {/* Footer */}
         {footer && <Footer entry={footer} />}
       </div>
     </>
   );
 }
 
-export const getStaticProps: GetStaticProps<HomePageProps> = async ({ preview = false }) => {
-  const page = await getPageBySlug('home', preview);
+export const getStaticPaths: GetStaticPaths = async () => {
+  const pages = await getAllPages();
+  
+  const paths = pages
+    .filter((page: any) => page.fields.slug !== 'home') // Exclude home page (handled by index.tsx)
+    .map((page: any) => ({
+      params: { slug: page.fields.slug },
+    }));
+
+  return {
+    paths,
+    fallback: 'blocking', // Generate pages on-demand if not pre-rendered
+  };
+};
+
+export const getStaticProps: GetStaticProps<PageProps> = async ({ params, preview = false }) => {
+  const slug = params?.slug as string;
+  const page = await getPageBySlug(slug, preview);
+
+  if (!page) {
+    return {
+      notFound: true,
+    };
+  }
 
   return {
     props: {
-      page: page || null,
+      page,
       preview,
     },
-    revalidate: 60, // Revalidate every 60 seconds (ISR)
+    revalidate: 60,
   };
 };
