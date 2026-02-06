@@ -58,18 +58,10 @@ export default function Hero({ entry }: HeroProps) {
           {ctaText && ctaLink && (
             <Link
               href={ctaLink}
-              className="inline-flex items-center text-white text-sm font-medium hover:underline transition-all group"
+              className="inline-flex items-center bg-[#001a33] text-white text-sm font-medium px-6 py-2.5 rounded-full hover:bg-[#002244] transition-colors"
               {...inspectorProps({ fieldId: 'ctaText' })}
             >
               {ctaText}
-              <svg 
-                className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
             </Link>
           )}
         </div>
