@@ -70,7 +70,7 @@ function HeroSlideContent({ slide }: { slide: HeroSlideEntry }) {
         {ctaText && ctaLink && (
           <Link
             href={ctaLink}
-            className="inline-flex items-center bg-white text-[#006bb6] px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
+            className="inline-flex items-center bg-yellow-400 text-black px-6 py-3 rounded-none font-semibold hover:bg-yellow-500 transition-colors"
             {...inspectorProps({ fieldId: 'ctaText' })}
           >
             {ctaText}

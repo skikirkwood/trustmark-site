@@ -105,6 +105,8 @@ export type QuickLinksEntry = Entry<QuickLinksSkeleton>;
 export interface FeatureCardFields {
   title: string;
   description?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  details?: any;
   image?: ContentfulAsset;
   link?: string;
   linkText?: string;
