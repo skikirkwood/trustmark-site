@@ -62,12 +62,7 @@ export type HeroSlideEntry = Entry<HeroSlideSkeleton>;
 
 // Hero
 export interface HeroFields {
-  headline?: string;
-  subheadline?: string;
-  backgroundImage?: ContentfulAsset;
-  ctaText?: string;
-  ctaLink?: string;
-  contentPosition?: 'left' | 'right';
+  name?: string;
   slides?: Entry<HeroSlideSkeleton>[];
 }
 

@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { useContentfulLiveUpdates, useContentfulInspectorMode } from '@contentful/live-preview/react';
 import { HeroEntry, HeroSlideEntry } from '@/types/contentful';
 import { getImageUrl } from '@/lib/contentful';
-import { Entry } from 'contentful';
 
 interface HeroProps {
   entry: HeroEntry;
@@ -11,13 +10,7 @@ interface HeroProps {
 
 const HERO_SLIDE_INTERVAL = 6000;
 
-function HeroSlideContent({
-  slide,
-  fallbackPosition = 'left',
-}: {
-  slide: HeroSlideEntry;
-  fallbackPosition?: 'left' | 'right';
-}) {
+function HeroSlideContent({ slide }: { slide: HeroSlideEntry }) {
   const data = useContentfulLiveUpdates(slide);
   const inspectorProps = useContentfulInspectorMode({ entryId: slide.sys.id });
   const fields = data?.fields ?? {};
@@ -33,13 +26,12 @@ function HeroSlideContent({
       : raw && typeof raw === 'object' && 'en-US' in raw
         ? String((raw as { 'en-US'?: string })['en-US'] ?? '')
         : '';
-  const slidePosition =
+  const contentPosition =
     rawPosition.toLowerCase() === 'right'
       ? ('right' as const)
       : rawPosition.toLowerCase() === 'left'
         ? ('left' as const)
-        : null;
-  const contentPosition = slidePosition ?? fallbackPosition;
+        : 'left';
   const isRight = contentPosition === 'right';
 
   return (
@@ -89,72 +81,10 @@ function HeroSlideContent({
   );
 }
 
-function SingleHeroContent({
-  entry,
-  inspectorProps,
-}: {
-  entry: HeroEntry;
-  inspectorProps: (opts: { fieldId: string }) => object | null;
-}) {
-  const data = useContentfulLiveUpdates(entry);
-  const backgroundUrl = getImageUrl(data.fields.backgroundImage);
-  const headline = String(data.fields.headline || '');
-  const subheadline = data.fields.subheadline ? String(data.fields.subheadline) : null;
-  const ctaText = data.fields.ctaText ? String(data.fields.ctaText) : null;
-  const ctaLink = data.fields.ctaLink ? String(data.fields.ctaLink) : null;
-  const contentPosition = data.fields.contentPosition ? String(data.fields.contentPosition) : 'left';
-  const isRight = contentPosition === 'right';
-
-  return (
-    <>
-      {backgroundUrl && (
-        <div
-          className="absolute inset-0 z-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${backgroundUrl})` }}
-        />
-      )}
-      <div
-        className={`relative z-10 h-full min-h-[400px] md:min-h-[500px] lg:min-h-[550px] flex items-center ${isRight ? 'justify-end pr-4 sm:pr-6 md:pr-8 lg:pr-12' : 'justify-start pl-4 sm:pl-6 md:pl-8 lg:pl-12'}`}
-      >
-        <div
-          className={`bg-[rgba(0,107,182,0.8)] py-10 md:py-14 lg:py-16 w-[85%] sm:w-[380px] md:w-[420px] lg:w-[480px] text-center px-4 sm:px-8 md:px-12 ${isRight ? 'rounded-l-lg' : 'rounded-r-lg'}`}
-        >
-          <h1
-            className="text-2xl md:text-3xl lg:text-4xl font-light text-white mb-2 leading-tight tracking-wide"
-            {...inspectorProps({ fieldId: 'headline' })}
-          >
-            {headline}
-          </h1>
-          {subheadline && (
-            <p
-              className="text-2xl md:text-3xl lg:text-4xl text-white/80 mb-6 font-light leading-tight"
-              {...inspectorProps({ fieldId: 'subheadline' })}
-            >
-              {subheadline}
-            </p>
-          )}
-          {ctaText && ctaLink && (
-            <Link
-              href={ctaLink}
-              className="inline-flex items-center bg-[#001a33] text-white text-sm font-medium px-6 py-2.5 rounded-full hover:bg-[#002244] transition-colors"
-              {...inspectorProps({ fieldId: 'ctaText' })}
-            >
-              {ctaText}
-            </Link>
-          )}
-        </div>
-      </div>
-    </>
-  );
-}
-
 export default function Hero({ entry }: HeroProps) {
   const data = useContentfulLiveUpdates(entry);
-  const inspectorProps = useContentfulInspectorMode({ entryId: entry.sys.id });
-  const slides = (data.fields.slides || []) as HeroSlideEntry[];
+  const slides = (data?.fields?.slides || []) as HeroSlideEntry[];
   const hasSlides = slides.length > 0;
-  const contentPosition =
-    String(data.fields.contentPosition || '') === 'right' ? 'right' : 'left';
 
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -166,81 +96,35 @@ export default function Hero({ entry }: HeroProps) {
     return () => clearInterval(timer);
   }, [hasSlides, slides.length]);
 
-  const heroFields = data?.fields ?? {};
-  const getStr = (v: unknown) =>
-    typeof v === 'string' ? v : v && typeof v === 'object' && 'en-US' in v ? String((v as { 'en-US'?: string })['en-US'] ?? '') : '';
-  const heroHeadline = getStr(heroFields.headline).trim();
-  const heroSubheadline = getStr(heroFields.subheadline).trim();
-  const heroCtaText = getStr(heroFields.ctaText);
-  const heroCtaLink = getStr(heroFields.ctaLink);
-  const showHeroContent =
-    hasSlides && (heroHeadline || heroSubheadline || (heroCtaText && heroCtaLink));
+  if (!hasSlides) {
+    return null;
+  }
 
   return (
-    <section className="relative flex flex-col min-h-[400px] md:min-h-[500px] lg:min-h-[550px] overflow-hidden bg-gray-200">
-      {showHeroContent && (
-        <div className="flex-shrink-0 z-20 bg-[#001a33] text-white px-4 sm:px-6 lg:px-8 py-6 md:py-8">
-          <div className="max-w-7xl mx-auto text-center">
-            {heroHeadline && (
-              <h1
-                className="text-2xl md:text-3xl lg:text-4xl font-light mb-2"
-                {...inspectorProps({ fieldId: 'headline' })}
-              >
-                {heroHeadline}
-              </h1>
-            )}
-            {heroSubheadline && (
-              <p
-                className="text-lg md:text-xl text-white/90 max-w-3xl mx-auto mb-4"
-                {...inspectorProps({ fieldId: 'subheadline' })}
-              >
-                {heroSubheadline}
-              </p>
-            )}
-            {heroCtaText && heroCtaLink && (
-              <Link
-                href={heroCtaLink}
-                className="inline-flex items-center bg-white text-[#001a33] px-6 py-2.5 rounded-full font-semibold hover:bg-gray-100 transition-colors"
-                {...inspectorProps({ fieldId: 'ctaText' })}
-              >
-                {heroCtaText}
-              </Link>
-            )}
-          </div>
+    <section className="relative min-h-[400px] md:min-h-[500px] lg:min-h-[550px] overflow-hidden bg-gray-200">
+      {slides.map((slide, index) => (
+        <div
+          key={slide.sys.id}
+          className={`absolute inset-0 transition-opacity duration-700 ${
+            index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
+          }`}
+        >
+          <HeroSlideContent slide={slide as HeroSlideEntry} />
         </div>
-      )}
-      {hasSlides ? (
-        <div className="relative flex-1 min-h-[300px]">
-          {slides.map((slide, index) => (
-            <div
-              key={slide.sys.id}
-              className={`absolute inset-0 transition-opacity duration-700 ${
-                index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
+      ))}
+      {slides.length > 1 && (
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+          {slides.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentSlide(index)}
+              className={`w-2.5 h-2.5 rounded-full transition-colors ${
+                index === currentSlide ? 'bg-white' : 'bg-white/50 hover:bg-white/75'
               }`}
-            >
-              <HeroSlideContent
-                slide={slide as HeroSlideEntry}
-                fallbackPosition={contentPosition}
-              />
-            </div>
+              aria-label={`Go to slide ${index + 1}`}
+            />
           ))}
-          {slides.length > 1 && (
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
-              {slides.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentSlide(index)}
-                  className={`w-2.5 h-2.5 rounded-full transition-colors ${
-                    index === currentSlide ? 'bg-white' : 'bg-white/50 hover:bg-white/75'
-                  }`}
-                  aria-label={`Go to slide ${index + 1}`}
-                />
-              ))}
-            </div>
-          )}
         </div>
-      ) : (
-        <SingleHeroContent entry={entry} inspectorProps={inspectorProps} />
       )}
     </section>
   );
