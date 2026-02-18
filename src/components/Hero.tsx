@@ -20,25 +20,42 @@ function HeroSlideContent({
 }) {
   const data = useContentfulLiveUpdates(slide);
   const inspectorProps = useContentfulInspectorMode({ entryId: slide.sys.id });
-  const backgroundUrl = getImageUrl(data.fields.backgroundImage);
-  const headline = String(data.fields.headline || '');
-  const subheadline = data.fields.subheadline ? String(data.fields.subheadline) : null;
-  const ctaText = data.fields.ctaText ? String(data.fields.ctaText) : null;
-  const ctaLink = data.fields.ctaLink ? String(data.fields.ctaLink) : null;
+  const fields = data?.fields ?? {};
+  const backgroundUrl = getImageUrl(fields.backgroundImage);
+  const headline = String(fields.headline || '');
+  const subheadline = fields.subheadline ? String(fields.subheadline) : null;
+  const ctaText = fields.ctaText ? String(fields.ctaText) : null;
+  const ctaLink = fields.ctaLink ? String(fields.ctaLink) : null;
+  const raw = fields.contentPosition;
+  const rawPosition =
+    typeof raw === 'string'
+      ? raw
+      : raw && typeof raw === 'object' && 'en-US' in raw
+        ? String((raw as { 'en-US'?: string })['en-US'] ?? '')
+        : '';
   const slidePosition =
-    String(data.fields.contentPosition || '') === 'right' ? 'right' : null;
+    rawPosition.toLowerCase() === 'right'
+      ? ('right' as const)
+      : rawPosition.toLowerCase() === 'left'
+        ? ('left' as const)
+        : null;
   const contentPosition = slidePosition ?? fallbackPosition;
   const isRight = contentPosition === 'right';
 
   return (
-    <div className="absolute inset-0 flex items-center">
+    <div className="absolute inset-0 flex w-full items-center">
       {backgroundUrl && (
         <div
           className="absolute inset-0 z-0 bg-cover bg-center"
           style={{ backgroundImage: `url(${backgroundUrl})` }}
+          aria-hidden
         />
       )}
-      <div className="absolute inset-0 z-[1] bg-[rgba(0,107,182,0.6)]" />
+      <div
+        className="absolute inset-0 z-[1]"
+        style={{ backgroundColor: 'rgba(0, 107, 182, 0.6)' }}
+        aria-hidden
+      />
       <div
         className={`relative z-10 max-w-xl lg:max-w-2xl px-4 sm:px-6 md:px-8 lg:px-12 ${
           isRight ? 'ml-auto text-right' : 'mr-auto text-left'
