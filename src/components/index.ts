@@ -4,6 +4,7 @@ export { default as QuickLinks } from './QuickLinks';
 export { default as FeatureCards } from './FeatureCards';
 export { default as CtaBanner } from './CtaBanner';
 export { default as ArticleGrid } from './ArticleGrid';
+export { default as Newsroom } from './Newsroom';
 export { default as StatsCta } from './StatsCta';
 export { default as Testimonial } from './Testimonial';
 export { default as Footer } from './Footer';

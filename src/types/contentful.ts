@@ -181,6 +181,48 @@ export interface ArticleGridSkeleton extends EntrySkeletonType {
 
 export type ArticleGridEntry = Entry<ArticleGridSkeleton>;
 
+// News item
+export interface NewsItemFields {
+  image?: ContentfulAsset;
+  title: string;
+  ctaLink?: string;
+}
+
+export interface NewsItemSkeleton extends EntrySkeletonType {
+  contentTypeId: 'newsItem';
+  fields: NewsItemFields;
+}
+
+export type NewsItemEntry = Entry<NewsItemSkeleton>;
+
+// Newsroom
+export interface NewsroomFields {
+  name: string;
+  title: string;
+  newsItems?: Entry<NewsItemSkeleton>[];
+  defaultImage?: ContentfulAsset;
+}
+
+export interface NewsroomSkeleton extends EntrySkeletonType {
+  contentTypeId: 'newsroom';
+  fields: NewsroomFields;
+}
+
+export type NewsroomEntry = Entry<NewsroomSkeleton>;
+
+// Newsroom Section
+export interface NewsroomSectionFields {
+  sectionTitle?: string;
+  newsroom?: Entry<NewsroomSkeleton>;
+}
+
+export interface NewsroomSectionSkeleton extends EntrySkeletonType {
+  contentTypeId: 'newsroomSection';
+  fields: NewsroomSectionFields;
+}
+
+export type NewsroomSectionEntry = Entry<NewsroomSectionSkeleton>;
+
 // Stats CTA
 export interface StatsCtaFields {
   headline: string;
@@ -247,6 +289,7 @@ export interface PageFields {
     | Entry<ArticleGridSkeleton>
     | Entry<StatsCtaSkeleton>
     | Entry<TestimonialSkeleton>
+    | Entry<NewsroomSectionSkeleton>
   )[];
   footer?: Entry<FooterSkeleton>;
 }
@@ -266,7 +309,8 @@ export type ModuleEntry =
   | CtaBannerEntry
   | ArticleGridEntry
   | StatsCtaEntry
-  | TestimonialEntry;
+  | TestimonialEntry
+  | NewsroomSectionEntry;
 
 // Type guard helpers
 export function isHeroEntry(entry: ModuleEntry): entry is HeroEntry {
@@ -295,4 +339,8 @@ export function isStatsCtaEntry(entry: ModuleEntry): entry is StatsCtaEntry {
 
 export function isTestimonialEntry(entry: ModuleEntry): entry is TestimonialEntry {
   return entry.sys.contentType?.sys.id === 'testimonial';
+}
+
+export function isNewsroomSectionEntry(entry: ModuleEntry): entry is NewsroomSectionEntry {
+  return entry.sys.contentType?.sys.id === 'newsroomSection';
 }

@@ -12,9 +12,61 @@ interface FeatureCardsProps {
   entry: FeatureCardsSectionEntry;
 }
 
+function FeatureCardDetailsPanel({ card }: { card: FeatureCardEntry }) {
+  const data = useContentfulLiveUpdates(card);
+  const inspectorProps = useContentfulInspectorMode({ entryId: card.sys.id });
+  const details = data?.fields?.details;
+  const link = data?.fields?.link ? String(data.fields.link) : null;
+  const linkText = data?.fields?.linkText ? String(data.fields.linkText) : null;
+
+  const hasDetails =
+    details &&
+    typeof details === 'object' &&
+    'nodeType' in details &&
+    details.nodeType === 'document' &&
+    Array.isArray((details as { content?: unknown[] }).content) &&
+    (details as { content: unknown[] }).content.length > 0;
+
+  if (!hasDetails) return null;
+
+  return (
+    <div className="mt-12 pt-8 border-t border-gray-200 w-full max-w-[66.666vw]">
+      <div
+        className="text-black prose prose-sm [&_p]:mb-2 [&_ul]:list-disc [&_ol]:list-decimal"
+        {...inspectorProps({ fieldId: 'details' })}
+      >
+        {documentToReactComponents(details as Document)}
+      </div>
+      {link && (
+        <div className="mt-4">
+          <Link
+            href={link}
+            className="inline-flex items-center text-[#006bb6] font-medium hover:text-[#004d8a] transition-colors"
+            {...inspectorProps({ fieldId: 'linkText' })}
+          >
+            {linkText || 'Learn more'}
+            <svg
+              className="w-4 h-4 ml-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </Link>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function FeatureCard({
   card,
-  isExpanded,
   onToggle,
 }: {
   card: FeatureCardEntry;
@@ -28,8 +80,6 @@ function FeatureCard({
   const title = String(data?.fields?.title || '');
   const description = data?.fields?.description ? String(data.fields.description) : null;
   const details = data?.fields?.details;
-  const link = data?.fields?.link ? String(data.fields.link) : null;
-  const linkText = data?.fields?.linkText ? String(data.fields.linkText) : null;
 
   const hasDetails =
     details &&
@@ -45,11 +95,7 @@ function FeatureCard({
   const clickableStyles = hasDetails ? 'cursor-pointer' : '';
 
   return (
-    <div
-      className={`bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow group ${
-        isExpanded ? 'md:col-span-2' : ''
-      }`}
-    >
+    <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow group">
       {imageUrl && (
         <div className="relative h-48 overflow-hidden">
           <Image
@@ -87,30 +133,6 @@ function FeatureCard({
             </p>
           )}
         </div>
-        {isExpanded && hasDetails && (
-          <div className="mt-6 flex flex-col">
-            <div
-              className="w-full max-w-[66.666vw] text-black prose prose-sm [&_p]:mb-2 [&_ul]:list-disc [&_ol]:list-decimal"
-              {...inspectorProps({ fieldId: 'details' })}
-            >
-              {documentToReactComponents(details as Document)}
-            </div>
-            {link && (
-              <div className="mt-4">
-                <Link
-                  href={link}
-                  className="inline-flex items-center text-[#006bb6] font-medium hover:text-[#004d8a] transition-colors"
-                  {...inspectorProps({ fieldId: 'linkText' })}
-                >
-                  {linkText || 'Learn more'}
-                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </Link>
-              </div>
-            )}
-          </div>
-        )}
       </div>
     </div>
   );
@@ -166,6 +188,10 @@ export default function FeatureCards({ entry }: FeatureCardsProps) {
             />
           ))}
         </div>
+        {expandedCardId && (() => {
+          const card = cards.find((c) => c.sys.id === expandedCardId) as FeatureCardEntry | undefined;
+          return card ? <FeatureCardDetailsPanel card={card} /> : null;
+        })()}
       </div>
     </section>
   );

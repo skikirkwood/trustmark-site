@@ -7,6 +7,7 @@ import {
   isArticleGridEntry,
   isStatsCtaEntry,
   isTestimonialEntry,
+  isNewsroomSectionEntry,
 } from '@/types/contentful';
 import Hero from './Hero';
 import QuickLinks from './QuickLinks';
@@ -15,6 +16,7 @@ import CtaBanner from './CtaBanner';
 import ArticleGrid from './ArticleGrid';
 import StatsCta from './StatsCta';
 import Testimonial from './Testimonial';
+import Newsroom from './Newsroom';
 
 interface ModuleRendererProps {
   modules: ModuleEntry[];
@@ -52,6 +54,10 @@ export default function ModuleRenderer({ modules }: ModuleRendererProps) {
 
         if (isTestimonialEntry(module)) {
           return <Testimonial key={key} entry={module} />;
+        }
+
+        if (isNewsroomSectionEntry(module)) {
+          return <Newsroom key={key} entry={module} />;
         }
 
         // Unknown module type - log warning in development
