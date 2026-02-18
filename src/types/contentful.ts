@@ -43,14 +43,31 @@ export interface NavigationSkeleton extends EntrySkeletonType {
 
 export type NavigationEntry = Entry<NavigationSkeleton>;
 
-// Hero
-export interface HeroFields {
+// Hero Slide
+export interface HeroSlideFields {
   headline: string;
   subheadline?: string;
   backgroundImage?: ContentfulAsset;
   ctaText?: string;
   ctaLink?: string;
+}
+
+export interface HeroSlideSkeleton extends EntrySkeletonType {
+  contentTypeId: '5YkWjInnJCcM0WKHRePZde';
+  fields: HeroSlideFields;
+}
+
+export type HeroSlideEntry = Entry<HeroSlideSkeleton>;
+
+// Hero
+export interface HeroFields {
+  headline?: string;
+  subheadline?: string;
+  backgroundImage?: ContentfulAsset;
+  ctaText?: string;
+  ctaLink?: string;
   contentPosition?: 'left' | 'right';
+  slides?: Entry<HeroSlideSkeleton>[];
 }
 
 export interface HeroSkeleton extends EntrySkeletonType {
@@ -78,6 +95,7 @@ export type QuickLinkItemEntry = Entry<QuickLinkItemSkeleton>;
 export interface QuickLinksFields {
   title: string;
   items?: Entry<QuickLinkItemSkeleton>[];
+  placeholder?: string;
 }
 
 export interface QuickLinksSkeleton extends EntrySkeletonType {
@@ -106,6 +124,7 @@ export type FeatureCardEntry = Entry<FeatureCardSkeleton>;
 // Feature Cards Section
 export interface FeatureCardsSectionFields {
   sectionTitle?: string;
+  subtitle?: string;
   cards?: Entry<FeatureCardSkeleton>[];
 }
 
@@ -164,6 +183,36 @@ export interface ArticleGridSkeleton extends EntrySkeletonType {
 
 export type ArticleGridEntry = Entry<ArticleGridSkeleton>;
 
+// Stats CTA
+export interface StatsCtaFields {
+  headline: string;
+  description?: string;
+  buttonText?: string;
+  buttonLink?: string;
+  backgroundImage?: ContentfulAsset;
+}
+
+export interface StatsCtaSkeleton extends EntrySkeletonType {
+  contentTypeId: 'statsCta';
+  fields: StatsCtaFields;
+}
+
+export type StatsCtaEntry = Entry<StatsCtaSkeleton>;
+
+// Testimonial
+export interface TestimonialFields {
+  quote: string;
+  attribution?: string;
+  backgroundImage?: ContentfulAsset;
+}
+
+export interface TestimonialSkeleton extends EntrySkeletonType {
+  contentTypeId: 'testimonial';
+  fields: TestimonialFields;
+}
+
+export type TestimonialEntry = Entry<TestimonialSkeleton>;
+
 // Footer
 export interface FooterLinkColumn {
   title: string;
@@ -176,6 +225,7 @@ export interface FooterFields {
   copyrightText?: string;
   linkColumns?: FooterLinkColumn[];
   socialLinks?: { platform: string; url: string; icon?: string }[];
+  disclaimer?: string;
 }
 
 export interface FooterSkeleton extends EntrySkeletonType {
@@ -196,6 +246,8 @@ export interface PageFields {
     | Entry<FeatureCardsSectionSkeleton>
     | Entry<CtaBannerSkeleton>
     | Entry<ArticleGridSkeleton>
+    | Entry<StatsCtaSkeleton>
+    | Entry<TestimonialSkeleton>
   )[];
   footer?: Entry<FooterSkeleton>;
 }
@@ -213,7 +265,9 @@ export type ModuleEntry =
   | QuickLinksEntry
   | FeatureCardsSectionEntry
   | CtaBannerEntry
-  | ArticleGridEntry;
+  | ArticleGridEntry
+  | StatsCtaEntry
+  | TestimonialEntry;
 
 // Type guard helpers
 export function isHeroEntry(entry: ModuleEntry): entry is HeroEntry {
@@ -234,4 +288,12 @@ export function isCtaBannerEntry(entry: ModuleEntry): entry is CtaBannerEntry {
 
 export function isArticleGridEntry(entry: ModuleEntry): entry is ArticleGridEntry {
   return entry.sys.contentType?.sys.id === 'articleGrid';
+}
+
+export function isStatsCtaEntry(entry: ModuleEntry): entry is StatsCtaEntry {
+  return entry.sys.contentType?.sys.id === 'statsCta';
+}
+
+export function isTestimonialEntry(entry: ModuleEntry): entry is TestimonialEntry {
+  return entry.sys.contentType?.sys.id === 'testimonial';
 }

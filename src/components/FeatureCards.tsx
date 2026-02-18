@@ -48,7 +48,7 @@ function FeatureCard({ card }: { card: FeatureCardEntry }) {
         {link && (
           <Link
             href={link}
-            className="inline-flex items-center text-blue-600 font-medium hover:text-blue-800 transition-colors"
+            className="inline-flex items-center text-[#006bb6] font-medium hover:text-[#004d8a] transition-colors"
             {...inspectorProps({ fieldId: 'linkText' })}
           >
             {linkText || 'Learn more'}
@@ -66,6 +66,7 @@ export default function FeatureCards({ entry }: FeatureCardsProps) {
   const data = useContentfulLiveUpdates(entry);
   const inspectorProps = useContentfulInspectorMode({ entryId: entry.sys.id });
   const sectionTitle = data.fields.sectionTitle ? String(data.fields.sectionTitle) : null;
+  const subtitle = data.fields.subtitle ? String(data.fields.subtitle) : null;
   const cards = (data.fields.cards || []) as Entry<FeatureCardSkeleton>[];
 
   if (!cards.length) return null;
@@ -73,13 +74,25 @@ export default function FeatureCards({ entry }: FeatureCardsProps) {
   return (
     <section className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {sectionTitle && (
-          <h2 
-            className="text-3xl font-bold text-gray-900 mb-12 text-center"
-            {...inspectorProps({ fieldId: 'sectionTitle' })}
-          >
-            {sectionTitle}
-          </h2>
+        {(sectionTitle || subtitle) && (
+          <div className="text-center mb-12">
+            {sectionTitle && (
+              <h2 
+                className="text-3xl font-bold text-gray-900 mb-4"
+                {...inspectorProps({ fieldId: 'sectionTitle' })}
+              >
+                {sectionTitle}
+              </h2>
+            )}
+            {subtitle && (
+              <p 
+                className="text-lg text-gray-600 max-w-2xl mx-auto"
+                {...inspectorProps({ fieldId: 'subtitle' })}
+              >
+                {subtitle}
+              </p>
+            )}
+          </div>
         )}
         <div 
           className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"

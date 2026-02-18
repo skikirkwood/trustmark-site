@@ -30,7 +30,7 @@ function ArticleCard({ article }: { article: ArticleCardEntry }) {
             className="object-cover group-hover:scale-105 transition-transform duration-300"
           />
           {category && (
-            <span className="absolute top-4 left-4 bg-blue-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
+            <span className="absolute top-4 left-4 bg-[#006bb6] text-white text-xs font-semibold px-3 py-1 rounded-full">
               {category}
             </span>
           )}
@@ -38,7 +38,7 @@ function ArticleCard({ article }: { article: ArticleCardEntry }) {
       )}
       <div className="p-6">
         <h3 
-          className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors"
+          className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-[#006bb6] transition-colors"
           {...inspectorProps({ fieldId: 'title' })}
         >
           {title}
@@ -54,7 +54,7 @@ function ArticleCard({ article }: { article: ArticleCardEntry }) {
         {data.fields.link && (
           <Link
             href={String(data.fields.link)}
-            className="inline-flex items-center text-blue-600 font-medium text-sm hover:text-blue-800 transition-colors"
+            className="inline-flex items-center text-[#006bb6] font-medium text-sm hover:text-[#004d8a] transition-colors"
             {...inspectorProps({ fieldId: 'linkText' })}
           >
             {linkText || 'Read the article'}

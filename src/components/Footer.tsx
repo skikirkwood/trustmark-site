@@ -40,6 +40,7 @@ export default function Footer({ entry }: FooterProps) {
   const logoUrl = getImageUrl(data.fields.logo);
   const name = String(data.fields.name || '');
   const copyrightText = data.fields.copyrightText ? String(data.fields.copyrightText) : null;
+  const disclaimer = data.fields.disclaimer ? String(data.fields.disclaimer) : null;
   const linkColumns = (data.fields.linkColumns || []) as { title: string; links: { label: string; url: string }[] }[];
   const socialLinks = (data.fields.socialLinks || []) as { platform: string; url: string; icon?: string }[];
 
@@ -107,6 +108,18 @@ export default function Footer({ entry }: FooterProps) {
             </div>
           ))}
         </div>
+
+        {/* Disclaimer */}
+        {disclaimer && (
+          <div className="mt-8">
+            <p
+              className="text-gray-500 text-xs leading-relaxed max-w-4xl"
+              {...inspectorProps({ fieldId: 'disclaimer' })}
+            >
+              {disclaimer}
+            </p>
+          </div>
+        )}
 
         {/* Bottom bar */}
         <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
