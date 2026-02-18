@@ -16,28 +16,27 @@ export default function Testimonial({ entry }: TestimonialProps) {
 
   return (
     <section
-      className="relative py-16 lg:py-20"
+      className="relative py-16 lg:py-20 bg-[#e85d04]"
       style={{
         backgroundImage: backgroundUrl ? `url(${backgroundUrl})` : undefined,
-        backgroundColor: !backgroundUrl ? '#f3f4f6' : undefined,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
     >
       {backgroundUrl && (
-        <div className="absolute inset-0 bg-gray-900/60" />
+        <div className="absolute inset-0 bg-[#e85d04]/80" />
       )}
       <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <blockquote>
           <p
-            className="text-xl md:text-2xl text-white font-light italic mb-6 leading-relaxed"
+            className="text-xl md:text-2xl text-black font-light italic mb-6 leading-relaxed"
             {...inspectorProps({ fieldId: 'quote' })}
           >
             &ldquo;{quote}&rdquo;
           </p>
           {attribution && (
             <footer
-              className="text-white/80 text-sm font-medium"
+              className="text-black/80 text-sm font-medium"
               {...inspectorProps({ fieldId: 'attribution' })}
             >
               — {attribution}
