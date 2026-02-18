@@ -53,7 +53,7 @@ function HeroSlideContent({
       )}
       <div
         className="absolute inset-0 z-[1]"
-        style={{ backgroundColor: 'rgba(0, 107, 182, 0.6)' }}
+        style={{ backgroundColor: 'rgba(0, 0, 0, 0.25)' }}
         aria-hidden
       />
       <div
@@ -166,10 +166,51 @@ export default function Hero({ entry }: HeroProps) {
     return () => clearInterval(timer);
   }, [hasSlides, slides.length]);
 
+  const heroFields = data?.fields ?? {};
+  const getStr = (v: unknown) =>
+    typeof v === 'string' ? v : v && typeof v === 'object' && 'en-US' in v ? String((v as { 'en-US'?: string })['en-US'] ?? '') : '';
+  const heroHeadline = getStr(heroFields.headline).trim();
+  const heroSubheadline = getStr(heroFields.subheadline).trim();
+  const heroCtaText = getStr(heroFields.ctaText);
+  const heroCtaLink = getStr(heroFields.ctaLink);
+  const showHeroContent =
+    hasSlides && (heroHeadline || heroSubheadline || (heroCtaText && heroCtaLink));
+
   return (
-    <section className="relative min-h-[400px] md:min-h-[500px] lg:min-h-[550px] overflow-hidden bg-gray-200">
+    <section className="relative flex flex-col min-h-[400px] md:min-h-[500px] lg:min-h-[550px] overflow-hidden bg-gray-200">
+      {showHeroContent && (
+        <div className="flex-shrink-0 z-20 bg-[#001a33] text-white px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+          <div className="max-w-7xl mx-auto text-center">
+            {heroHeadline && (
+              <h1
+                className="text-2xl md:text-3xl lg:text-4xl font-light mb-2"
+                {...inspectorProps({ fieldId: 'headline' })}
+              >
+                {heroHeadline}
+              </h1>
+            )}
+            {heroSubheadline && (
+              <p
+                className="text-lg md:text-xl text-white/90 max-w-3xl mx-auto mb-4"
+                {...inspectorProps({ fieldId: 'subheadline' })}
+              >
+                {heroSubheadline}
+              </p>
+            )}
+            {heroCtaText && heroCtaLink && (
+              <Link
+                href={heroCtaLink}
+                className="inline-flex items-center bg-white text-[#001a33] px-6 py-2.5 rounded-full font-semibold hover:bg-gray-100 transition-colors"
+                {...inspectorProps({ fieldId: 'ctaText' })}
+              >
+                {heroCtaText}
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
       {hasSlides ? (
-        <>
+        <div className="relative flex-1 min-h-[300px]">
           {slides.map((slide, index) => (
             <div
               key={slide.sys.id}
@@ -197,7 +238,7 @@ export default function Hero({ entry }: HeroProps) {
               ))}
             </div>
           )}
-        </>
+        </div>
       ) : (
         <SingleHeroContent entry={entry} inspectorProps={inspectorProps} />
       )}
