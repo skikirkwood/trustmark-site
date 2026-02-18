@@ -11,7 +11,13 @@ interface HeroProps {
 
 const HERO_SLIDE_INTERVAL = 6000;
 
-function HeroSlideContent({ slide }: { slide: HeroSlideEntry }) {
+function HeroSlideContent({
+  slide,
+  contentPosition = 'left',
+}: {
+  slide: HeroSlideEntry;
+  contentPosition?: 'left' | 'right';
+}) {
   const data = useContentfulLiveUpdates(slide);
   const inspectorProps = useContentfulInspectorMode({ entryId: slide.sys.id });
   const backgroundUrl = getImageUrl(data.fields.backgroundImage);
@@ -19,9 +25,10 @@ function HeroSlideContent({ slide }: { slide: HeroSlideEntry }) {
   const subheadline = data.fields.subheadline ? String(data.fields.subheadline) : null;
   const ctaText = data.fields.ctaText ? String(data.fields.ctaText) : null;
   const ctaLink = data.fields.ctaLink ? String(data.fields.ctaLink) : null;
+  const isRight = contentPosition === 'right';
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center">
+    <div className="absolute inset-0 flex items-center">
       {backgroundUrl && (
         <div
           className="absolute inset-0 z-0 bg-cover bg-center"
@@ -29,7 +36,11 @@ function HeroSlideContent({ slide }: { slide: HeroSlideEntry }) {
         />
       )}
       <div className="absolute inset-0 z-[1] bg-[rgba(0,107,182,0.6)]" />
-      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div
+        className={`relative z-10 max-w-xl lg:max-w-2xl px-4 sm:px-6 md:px-8 lg:px-12 ${
+          isRight ? 'ml-auto text-right' : 'mr-auto text-left'
+        }`}
+      >
         <h1
           className="text-3xl md:text-4xl lg:text-5xl font-light text-white mb-4 leading-tight"
           {...inspectorProps({ fieldId: 'headline' })}
@@ -122,6 +133,8 @@ export default function Hero({ entry }: HeroProps) {
   const inspectorProps = useContentfulInspectorMode({ entryId: entry.sys.id });
   const slides = (data.fields.slides || []) as HeroSlideEntry[];
   const hasSlides = slides.length > 0;
+  const contentPosition =
+    String(data.fields.contentPosition || '') === 'right' ? 'right' : 'left';
 
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -144,7 +157,10 @@ export default function Hero({ entry }: HeroProps) {
                 index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
               }`}
             >
-              <HeroSlideContent slide={slide as HeroSlideEntry} />
+              <HeroSlideContent
+                slide={slide as HeroSlideEntry}
+                contentPosition={contentPosition}
+              />
             </div>
           ))}
           {slides.length > 1 && (

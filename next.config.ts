@@ -12,6 +12,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'downloads.ctfassets.net',
       },
+      {
+        protocol: 'https',
+        hostname: 'marvel-b1-cdn.bc0a.com',
+      },
     ],
   },
 };

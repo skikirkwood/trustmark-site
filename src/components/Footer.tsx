@@ -3,7 +3,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useContentfulLiveUpdates, useContentfulInspectorMode } from '@contentful/live-preview/react';
 import { FooterEntry } from '@/types/contentful';
-import { getImageUrl } from '@/lib/contentful';
 
 interface FooterProps {
   entry: FooterEntry;
@@ -37,7 +36,8 @@ export default function Footer({ entry }: FooterProps) {
   const data = useContentfulLiveUpdates(entry);
   const inspectorProps = useContentfulInspectorMode({ entryId: entry.sys.id });
   
-  const logoUrl = getImageUrl(data.fields.logo);
+  const logoUrl =
+    'https://marvel-b1-cdn.bc0a.com/f00000000221956/trustmarkbenefits.com/Trustmark-Benefits-Web/media/Trustmark-Logos/logo-with-tagline-inverse.png';
   const name = String(data.fields.name || '');
   const copyrightText = data.fields.copyrightText ? String(data.fields.copyrightText) : null;
   const disclaimer = data.fields.disclaimer ? String(data.fields.disclaimer) : null;
@@ -57,7 +57,7 @@ export default function Footer({ entry }: FooterProps) {
                   alt={name}
                   width={150}
                   height={40}
-                  className="h-10 w-auto brightness-0 invert"
+                  className="h-10 w-auto"
                 />
               ) : (
                 <span className="text-2xl font-bold">{name}</span>

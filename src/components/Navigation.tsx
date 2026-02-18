@@ -3,7 +3,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useContentfulLiveUpdates, useContentfulInspectorMode } from '@contentful/live-preview/react';
 import { NavigationEntry, NavigationItemEntry, NavigationItemSkeleton } from '@/types/contentful';
-import { getImageUrl } from '@/lib/contentful';
 import { Entry } from 'contentful';
 
 interface NavigationProps {
@@ -30,7 +29,7 @@ function NavItem({ item, isMobile }: NavItemProps) {
     return (
       <Link
         href={link}
-        className="bg-[#001a33] text-white px-6 py-2.5 rounded-full hover:bg-[#002244] transition-colors font-medium text-sm"
+        className="bg-white text-[#001a33] px-6 py-2.5 rounded-full hover:bg-white/90 transition-colors font-medium text-sm"
         {...inspectorProps({ fieldId: 'title' })}
       >
         {title}
@@ -47,7 +46,7 @@ function NavItem({ item, isMobile }: NavItemProps) {
       >
         <button
           onClick={() => isMobile && setIsOpen(!isOpen)}
-          className="flex items-center gap-1 text-gray-700 hover:text-blue-600 transition-colors font-medium py-2"
+          className="flex items-center gap-1 text-white/90 hover:text-white transition-colors font-medium py-2"
           {...inspectorProps({ fieldId: 'title' })}
         >
           {title}
@@ -76,7 +75,7 @@ function NavItem({ item, isMobile }: NavItemProps) {
   return (
     <Link
       href={link}
-      className="text-gray-700 hover:text-blue-600 transition-colors font-medium py-2"
+      className="text-white/90 hover:text-white transition-colors font-medium py-2"
       {...inspectorProps({ fieldId: 'title' })}
     >
       {title}
@@ -89,12 +88,13 @@ export default function Navigation({ entry }: NavigationProps) {
   const data = useContentfulLiveUpdates(entry);
   const inspectorProps = useContentfulInspectorMode({ entryId: entry.sys.id });
   
-  const logoUrl = getImageUrl(data.fields.logo);
+  const logoUrl =
+    'https://marvel-b1-cdn.bc0a.com/f00000000221956/trustmarkbenefits.com/Trustmark-Benefits-Web/media/Trustmark-Logos/logo-with-tagline-inverse.png';
   const name = String(data.fields.name || '');
   const items = (data.fields.items || []) as Entry<NavigationItemSkeleton>[];
 
   return (
-    <header className="sticky top-0 z-50 bg-white shadow-sm">
+    <header className="sticky top-0 z-50 bg-[#001a33] shadow-sm">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -108,7 +108,7 @@ export default function Navigation({ entry }: NavigationProps) {
                 className="h-10 w-auto"
               />
             ) : (
-              <span className="text-2xl font-bold text-blue-600">{name}</span>
+              <span className="text-2xl font-bold text-white">{name}</span>
             )}
           </Link>
 
@@ -121,7 +121,7 @@ export default function Navigation({ entry }: NavigationProps) {
 
           {/* Mobile menu button */}
           <button
-            className="lg:hidden p-2 text-gray-700"
+            className="lg:hidden p-2 text-white"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -136,7 +136,7 @@ export default function Navigation({ entry }: NavigationProps) {
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="lg:hidden py-4 border-t">
+          <div className="lg:hidden py-4 border-t border-white/20">
             <div className="flex flex-col gap-2">
               {items.map((item) => (
                 <NavItem key={item.sys.id} item={item} isMobile />
