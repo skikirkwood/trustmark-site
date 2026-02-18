@@ -12,8 +12,15 @@ interface FeatureCardsProps {
   entry: FeatureCardsSectionEntry;
 }
 
-function FeatureCard({ card }: { card: FeatureCardEntry }) {
-  const [isExpanded, setIsExpanded] = useState(false);
+function FeatureCard({
+  card,
+  isExpanded,
+  onToggle,
+}: {
+  card: FeatureCardEntry;
+  isExpanded: boolean;
+  onToggle: () => void;
+}) {
   const [isHovered, setIsHovered] = useState(false);
   const data = useContentfulLiveUpdates(card);
   const inspectorProps = useContentfulInspectorMode({ entryId: card.sys.id });
@@ -38,7 +45,11 @@ function FeatureCard({ card }: { card: FeatureCardEntry }) {
   const clickableStyles = hasDetails ? 'cursor-pointer' : '';
 
   return (
-    <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow group">
+    <div
+      className={`bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow group ${
+        isExpanded ? 'md:col-span-2' : ''
+      }`}
+    >
       {imageUrl && (
         <div className="relative h-48 overflow-hidden">
           <Image
@@ -55,9 +66,9 @@ function FeatureCard({ card }: { card: FeatureCardEntry }) {
           tabIndex={0}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          onClick={() => hasDetails && setIsExpanded((e) => !e)}
+          onClick={() => hasDetails && onToggle()}
           onKeyDown={(e) =>
-            hasDetails && (e.key === 'Enter' || e.key === ' ') && setIsExpanded((x) => !x)
+            hasDetails && (e.key === 'Enter' || e.key === ' ') && onToggle()
           }
           className={`rounded px-1 -mx-1 py-0.5 -my-0.5 ${hoverStyles} ${clickableStyles}`}
         >
@@ -77,39 +88,27 @@ function FeatureCard({ card }: { card: FeatureCardEntry }) {
           )}
         </div>
         {isExpanded && hasDetails && (
-          <div className="mt-4 space-y-4">
+          <div className="mt-6 flex flex-col">
             <div
-              className="text-black prose prose-sm max-w-none [&_p]:mb-2 [&_ul]:list-disc [&_ol]:list-decimal"
+              className="w-full max-w-[66.666vw] text-black prose prose-sm [&_p]:mb-2 [&_ul]:list-disc [&_ol]:list-decimal"
               {...inspectorProps({ fieldId: 'details' })}
             >
               {documentToReactComponents(details as Document)}
             </div>
             {link && (
-              <Link
-                href={link}
-                className="inline-flex items-center text-[#006bb6] font-medium hover:text-[#004d8a] transition-colors"
-                {...inspectorProps({ fieldId: 'linkText' })}
-              >
-                {linkText || 'Learn more'}
-                <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </Link>
+              <div className="mt-4">
+                <Link
+                  href={link}
+                  className="inline-flex items-center text-[#006bb6] font-medium hover:text-[#004d8a] transition-colors"
+                  {...inspectorProps({ fieldId: 'linkText' })}
+                >
+                  {linkText || 'Learn more'}
+                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              </div>
             )}
-          </div>
-        )}
-        {!isExpanded && link && (
-          <div className="mt-4">
-            <Link
-              href={link}
-              className="inline-flex items-center text-[#006bb6] font-medium hover:text-[#004d8a] transition-colors"
-              {...inspectorProps({ fieldId: 'linkText' })}
-            >
-              {linkText || 'Learn more'}
-              <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </Link>
           </div>
         )}
       </div>
@@ -118,6 +117,7 @@ function FeatureCard({ card }: { card: FeatureCardEntry }) {
 }
 
 export default function FeatureCards({ entry }: FeatureCardsProps) {
+  const [expandedCardId, setExpandedCardId] = useState<string | null>(null);
   const data = useContentfulLiveUpdates(entry);
   const inspectorProps = useContentfulInspectorMode({ entryId: entry.sys.id });
   const sectionTitle = data.fields.sectionTitle ? String(data.fields.sectionTitle) : null;
@@ -154,7 +154,16 @@ export default function FeatureCards({ entry }: FeatureCardsProps) {
           {...inspectorProps({ fieldId: 'cards' })}
         >
           {cards.map((card) => (
-            <FeatureCard key={card.sys.id} card={card} />
+            <FeatureCard
+              key={card.sys.id}
+              card={card}
+              isExpanded={expandedCardId === card.sys.id}
+              onToggle={() =>
+                setExpandedCardId((prev) =>
+                  prev === card.sys.id ? null : card.sys.id
+                )
+              }
+            />
           ))}
         </div>
       </div>

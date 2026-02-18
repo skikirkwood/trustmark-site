@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { useContentfulLiveUpdates, useContentfulInspectorMode } from '@contentful/live-preview/react';
 import { TestimonialEntry } from '@/types/contentful';
 import { getImageUrl } from '@/lib/contentful';
@@ -10,6 +11,7 @@ export default function Testimonial({ entry }: TestimonialProps) {
   const data = useContentfulLiveUpdates(entry);
   const inspectorProps = useContentfulInspectorMode({ entryId: entry.sys.id });
 
+  const imageUrl = getImageUrl(data.fields.image);
   const backgroundUrl = getImageUrl(data.fields.backgroundImage);
   const quote = String(data.fields.quote || '');
   const attribution = data.fields.attribution ? String(data.fields.attribution) : null;
@@ -31,6 +33,20 @@ export default function Testimonial({ entry }: TestimonialProps) {
         />
       )}
       <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        {imageUrl && (
+          <div
+            className="flex justify-center mb-8"
+            {...inspectorProps({ fieldId: 'image' })}
+          >
+            <Image
+              src={imageUrl}
+              alt=""
+              width={120}
+              height={120}
+              className="rounded-full object-cover"
+            />
+          </div>
+        )}
         <blockquote>
           <p
             className="text-xl md:text-2xl text-black font-light italic mb-6 leading-relaxed"

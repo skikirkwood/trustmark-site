@@ -199,6 +199,7 @@ export type StatsCtaEntry = Entry<StatsCtaSkeleton>;
 
 // Testimonial
 export interface TestimonialFields {
+  image?: ContentfulAsset;
   quote: string;
   attribution?: string;
   backgroundImage?: ContentfulAsset;
