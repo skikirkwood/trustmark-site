@@ -16,15 +16,19 @@ export default function Testimonial({ entry }: TestimonialProps) {
 
   return (
     <section
-      className="relative py-16 lg:py-20 bg-[#e85d04]"
+      className="relative py-16 lg:py-20"
       style={{
+        backgroundColor: 'rgb(255, 194, 38)',
         backgroundImage: backgroundUrl ? `url(${backgroundUrl})` : undefined,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
     >
       {backgroundUrl && (
-        <div className="absolute inset-0 bg-[#e85d04]/80" />
+        <div
+          className="absolute inset-0"
+          style={{ backgroundColor: 'rgba(255, 194, 38, 0.8)' }}
+        />
       )}
       <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <blockquote>

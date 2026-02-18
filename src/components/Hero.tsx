@@ -13,10 +13,10 @@ const HERO_SLIDE_INTERVAL = 6000;
 
 function HeroSlideContent({
   slide,
-  contentPosition = 'left',
+  fallbackPosition = 'left',
 }: {
   slide: HeroSlideEntry;
-  contentPosition?: 'left' | 'right';
+  fallbackPosition?: 'left' | 'right';
 }) {
   const data = useContentfulLiveUpdates(slide);
   const inspectorProps = useContentfulInspectorMode({ entryId: slide.sys.id });
@@ -25,6 +25,9 @@ function HeroSlideContent({
   const subheadline = data.fields.subheadline ? String(data.fields.subheadline) : null;
   const ctaText = data.fields.ctaText ? String(data.fields.ctaText) : null;
   const ctaLink = data.fields.ctaLink ? String(data.fields.ctaLink) : null;
+  const slidePosition =
+    String(data.fields.contentPosition || '') === 'right' ? 'right' : null;
+  const contentPosition = slidePosition ?? fallbackPosition;
   const isRight = contentPosition === 'right';
 
   return (
@@ -159,7 +162,7 @@ export default function Hero({ entry }: HeroProps) {
             >
               <HeroSlideContent
                 slide={slide as HeroSlideEntry}
-                contentPosition={contentPosition}
+                fallbackPosition={contentPosition}
               />
             </div>
           ))}
