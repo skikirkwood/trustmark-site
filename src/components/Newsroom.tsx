@@ -30,9 +30,9 @@ function NewsItemCard({
   const ctaLink = data?.fields?.ctaLink ? String(data.fields.ctaLink) : null;
 
   return (
-    <article className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow group">
+    <article className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow group">
       {imageUrl && (
-        <div className="relative h-48 overflow-hidden bg-gray-50">
+        <div className="relative h-32 overflow-hidden bg-gray-50">
           <Image
             src={imageUrl}
             alt={title}
@@ -41,9 +41,9 @@ function NewsItemCard({
           />
         </div>
       )}
-      <div className="p-6">
+      <div className="p-4">
         <h3
-          className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-[#006bb6] transition-colors"
+          className="text-base font-semibold text-gray-900 mb-1.5 group-hover:text-[#006bb6] transition-colors line-clamp-2"
           {...inspectorProps({ fieldId: 'title' })}
         >
           {title}
@@ -51,12 +51,12 @@ function NewsItemCard({
         {ctaLink && (
           <Link
             href={ctaLink}
-            className="inline-flex items-center text-[#006bb6] font-medium text-sm hover:text-[#004d8a] transition-colors"
+            className="inline-flex items-center text-[#006bb6] font-medium text-xs hover:text-[#004d8a] transition-colors"
             {...inspectorProps({ fieldId: 'ctaLink' })}
           >
             Learn more
             <svg
-              className="w-4 h-4 ml-1"
+              className="w-3 h-3 ml-1"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -117,7 +117,7 @@ function NewsroomContent({
           </h2>
         </div>
         <div
-          className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+          className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6"
           {...inspectorProps({ fieldId: gridFieldId })}
         >
           {newsItems.map((item) => (
