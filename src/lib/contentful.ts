@@ -53,10 +53,13 @@ export async function getAllPages(preview: boolean = false) {
 }
 
 // Helper to extract image URL from asset (accepts any asset-like object)
+// Handles both direct structure and localized (e.g. file['en-US'])
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getImageUrl(asset: any): string | null {
-  if (!asset?.fields?.file?.url) return null;
-  const url = asset.fields.file.url;
+  const file = asset?.fields?.file;
+  if (!file) return null;
+  const url = typeof file.url === 'string' ? file.url : (file['en-US'] ?? Object.values(file)[0])?.url;
+  if (!url) return null;
   return url.startsWith('//') ? `https:${url}` : url;
 }
 

@@ -48,12 +48,13 @@ export default function StatsCta({ entry }: StatsCtaProps) {
   );
 
   const imageBlock = imageUrl && (
-    <div className="relative w-full lg:w-1/3 min-h-[200px] lg:min-h-0" {...inspectorProps({ fieldId: 'backgroundImage' })}>
+    <div className="relative w-full lg:w-1/3 min-h-[250px] lg:min-h-[400px]" {...inspectorProps({ fieldId: 'backgroundImage' })}>
       <Image
         src={imageUrl}
         alt=""
         fill
         className="object-cover"
+        sizes="33vw"
       />
     </div>
   );
