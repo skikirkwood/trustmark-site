@@ -230,6 +230,7 @@ export interface StatsCtaFields {
   buttonText?: string;
   buttonLink?: string;
   backgroundImage?: ContentfulAsset;
+  imagePosition?: 'left' | 'right';
 }
 
 export interface StatsCtaSkeleton extends EntrySkeletonType {
