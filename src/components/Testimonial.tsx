@@ -17,52 +17,56 @@ export default function Testimonial({ entry }: TestimonialProps) {
   const attribution = data.fields.attribution ? String(data.fields.attribution) : null;
 
   return (
-    <section
-      className="relative py-16 lg:py-20"
-      style={{
-        backgroundColor: 'rgb(255, 194, 38)',
-        backgroundImage: backgroundUrl ? `url(${backgroundUrl})` : undefined,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-      }}
-    >
-      {backgroundUrl && (
+    <section className="py-16 lg:py-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div
-          className="absolute inset-0"
-          style={{ backgroundColor: 'rgba(255, 194, 38, 0.8)' }}
-        />
-      )}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        {imageUrl && (
-          <div
-            className="flex justify-center mb-8"
-            {...inspectorProps({ fieldId: 'image' })}
-          >
-            <Image
-              src={imageUrl}
-              alt=""
-              width={120}
-              height={120}
-              className="rounded-full object-cover"
+          className="relative py-16 lg:py-20"
+          style={{
+            backgroundColor: 'rgb(255, 194, 38)',
+            backgroundImage: backgroundUrl ? `url(${backgroundUrl})` : undefined,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        >
+          {backgroundUrl && (
+            <div
+              className="absolute inset-0"
+              style={{ backgroundColor: 'rgba(255, 194, 38, 0.8)' }}
             />
-          </div>
-        )}
-        <blockquote>
-          <p
-            className="text-xl md:text-2xl text-black font-light italic mb-6 leading-relaxed"
-            {...inspectorProps({ fieldId: 'quote' })}
-          >
-            &ldquo;{quote}&rdquo;
-          </p>
-          {attribution && (
-            <footer
-              className="text-black/80 text-sm font-medium"
-              {...inspectorProps({ fieldId: 'attribution' })}
-            >
-              — {attribution}
-            </footer>
           )}
-        </blockquote>
+          <div className="relative z-10 text-center">
+            {imageUrl && (
+              <div
+                className="flex justify-center mb-8"
+                {...inspectorProps({ fieldId: 'image' })}
+              >
+                <Image
+                  src={imageUrl}
+                  alt=""
+                  width={120}
+                  height={120}
+                  className="rounded-full object-cover"
+                />
+              </div>
+            )}
+            <blockquote>
+              <p
+                className="text-xl md:text-2xl text-black font-light italic mb-6 leading-relaxed"
+                {...inspectorProps({ fieldId: 'quote' })}
+              >
+                &ldquo;{quote}&rdquo;
+              </p>
+              {attribution && (
+                <footer
+                  className="text-black/80 text-sm font-medium"
+                  {...inspectorProps({ fieldId: 'attribution' })}
+                >
+                  — {attribution}
+                </footer>
+              )}
+            </blockquote>
+          </div>
+        </div>
       </div>
     </section>
   );
