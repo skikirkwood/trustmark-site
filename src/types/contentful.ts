@@ -291,6 +291,7 @@ export interface PageFields {
     | Entry<StatsCtaSkeleton>
     | Entry<TestimonialSkeleton>
     | Entry<NewsroomSectionSkeleton>
+    | Entry<NewsroomSkeleton>
   )[];
   footer?: Entry<FooterSkeleton>;
 }
@@ -311,7 +312,8 @@ export type ModuleEntry =
   | ArticleGridEntry
   | StatsCtaEntry
   | TestimonialEntry
-  | NewsroomSectionEntry;
+  | NewsroomSectionEntry
+  | NewsroomEntry;
 
 // Type guard helpers
 export function isHeroEntry(entry: ModuleEntry): entry is HeroEntry {
@@ -344,4 +346,8 @@ export function isTestimonialEntry(entry: ModuleEntry): entry is TestimonialEntr
 
 export function isNewsroomSectionEntry(entry: ModuleEntry): entry is NewsroomSectionEntry {
   return entry.sys.contentType?.sys.id === 'newsroomSection';
+}
+
+export function isNewsroomEntry(entry: ModuleEntry): entry is NewsroomEntry {
+  return entry.sys.contentType?.sys.id === 'newsroom';
 }

@@ -2,35 +2,84 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useContentfulLiveUpdates, useContentfulInspectorMode } from '@contentful/live-preview/react';
-import { NavigationEntry, NavigationItemEntry, NavigationItemSkeleton } from '@/types/contentful';
-import { Entry } from 'contentful';
+import { NavigationEntry } from '@/types/contentful';
+
+const TRUSTMARK_BASE = 'https://www.trustmarkbenefits.com';
+
+// Default nav matching trustmarkbenefits.com top navigation
+const TRUSTMARK_NAV_ITEMS: Array<{
+  title: string;
+  link?: string;
+  children?: Array<{ title: string; link: string }>;
+  isButton?: boolean;
+}> = [
+  {
+    title: 'What We Do',
+    children: [
+      { title: 'HealthFitness', link: `${TRUSTMARK_BASE}/HealthFitness` },
+      { title: 'Small Business Benefits', link: `${TRUSTMARK_BASE}/Small-Business-Benefits` },
+      { title: 'Voluntary Benefits', link: `${TRUSTMARK_BASE}/Voluntary-Benefits` },
+    ],
+  },
+  {
+    title: 'Individuals',
+    children: [
+      { title: 'Small Business Benefits', link: `${TRUSTMARK_BASE}/Individuals/Small-Business-Benefits` },
+      { title: 'Voluntary Benefits', link: `${TRUSTMARK_BASE}/Individuals/Voluntary-Benefits` },
+    ],
+  },
+  {
+    title: 'Employers',
+    children: [
+      { title: 'HealthFitness', link: `${TRUSTMARK_BASE}/employers/healthfitness` },
+      { title: 'Small Business Benefits', link: `${TRUSTMARK_BASE}/employers/small-business-benefits` },
+      { title: 'Voluntary Benefits', link: `${TRUSTMARK_BASE}/employers/voluntary-benefits` },
+    ],
+  },
+  {
+    title: 'Brokers',
+    children: [
+      { title: 'HealthFitness', link: `${TRUSTMARK_BASE}/brokers/healthfitness` },
+      { title: 'Small Business Benefits', link: `${TRUSTMARK_BASE}/brokers/small-business-benefits` },
+      { title: 'Voluntary Benefits', link: `${TRUSTMARK_BASE}/brokers/voluntary-benefits` },
+    ],
+  },
+  { title: 'Providers', link: `${TRUSTMARK_BASE}/providers` },
+  {
+    title: 'Who We Are',
+    children: [
+      { title: 'File a Claim', link: `${TRUSTMARK_BASE}/File-a-Claim` },
+      { title: 'Contact Us', link: `${TRUSTMARK_BASE}/Contact-Us` },
+      { title: 'Community Involvement', link: `${TRUSTMARK_BASE}/Community-Involvement` },
+      { title: 'Newsroom', link: `${TRUSTMARK_BASE}/Newsroom` },
+      { title: 'Diversity & Inclusion', link: `${TRUSTMARK_BASE}/Diversity-Inclusion` },
+      { title: 'Careers', link: `${TRUSTMARK_BASE}/Careers` },
+      { title: 'Leadership', link: `${TRUSTMARK_BASE}/Leadership` },
+      { title: 'Our Story', link: `${TRUSTMARK_BASE}/Our-Story` },
+    ],
+  },
+  { title: 'Login', link: `${TRUSTMARK_BASE}/login` },
+];
 
 interface NavigationProps {
   entry: NavigationEntry;
 }
 
-interface NavItemProps {
-  item: NavigationItemEntry;
+interface StaticNavItemProps {
+  item: (typeof TRUSTMARK_NAV_ITEMS)[number];
   isMobile?: boolean;
 }
 
-function NavItem({ item, isMobile }: NavItemProps) {
+function StaticNavItem({ item, isMobile }: StaticNavItemProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const data = useContentfulLiveUpdates(item);
-  const inspectorProps = useContentfulInspectorMode({ entryId: item.sys.id });
-  
-  const title = String(data.fields.title || '');
-  const link = data.fields.link ? String(data.fields.link) : '#';
-  const children = (data.fields.children || []) as Entry<NavigationItemSkeleton>[];
-  const hasChildren = children.length > 0;
-  const isButton = Boolean(data.fields.isButton);
+  const { title, link = '#', children, isButton } = item;
+  const hasChildren = children && children.length > 0;
 
   if (isButton) {
     return (
       <Link
         href={link}
         className="bg-white text-[#001a33] px-6 py-2.5 rounded-full hover:bg-white/90 transition-colors font-medium text-sm"
-        {...inspectorProps({ fieldId: 'title' })}
       >
         {title}
       </Link>
@@ -39,7 +88,7 @@ function NavItem({ item, isMobile }: NavItemProps) {
 
   if (hasChildren) {
     return (
-      <div 
+      <div
         className="relative"
         onMouseEnter={() => !isMobile && setIsOpen(true)}
         onMouseLeave={() => !isMobile && setIsOpen(false)}
@@ -47,23 +96,17 @@ function NavItem({ item, isMobile }: NavItemProps) {
         <button
           onClick={() => isMobile && setIsOpen(!isOpen)}
           className="flex items-center gap-1 text-white/90 hover:text-white transition-colors font-medium py-2"
-          {...inspectorProps({ fieldId: 'title' })}
         >
           {title}
           <svg className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         </button>
-        
         {isOpen && (
           <div className={`${isMobile ? 'relative' : 'absolute top-full left-0'} bg-white shadow-lg rounded-lg py-2 min-w-[200px] z-50`}>
-            {children.map((child) => (
-              <Link
-                key={child.sys.id}
-                href={child.fields.link ? String(child.fields.link) : '#'}
-                className="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors"
-              >
-                {String(child.fields.title || '')}
+            {children!.map((child) => (
+              <Link key={child.link} href={child.link} className="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors">
+                {child.title}
               </Link>
             ))}
           </div>
@@ -73,11 +116,7 @@ function NavItem({ item, isMobile }: NavItemProps) {
   }
 
   return (
-    <Link
-      href={link}
-      className="text-white/90 hover:text-white transition-colors font-medium py-2"
-      {...inspectorProps({ fieldId: 'title' })}
-    >
+    <Link href={link} className="text-white/90 hover:text-white transition-colors font-medium py-2">
       {title}
     </Link>
   );
@@ -91,10 +130,9 @@ export default function Navigation({ entry }: NavigationProps) {
   const logoUrl =
     'https://marvel-b1-cdn.bc0a.com/f00000000221956/trustmarkbenefits.com/Trustmark-Benefits-Web/media/Trustmark-Logos/logo-with-tagline-inverse.png';
   const name = String(data.fields.name || '');
-  const items = (data.fields.items || []) as Entry<NavigationItemSkeleton>[];
 
   return (
-    <header className="sticky top-0 z-50 bg-[#001a33] shadow-sm">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-black/50 to-transparent">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -112,11 +150,20 @@ export default function Navigation({ entry }: NavigationProps) {
             )}
           </Link>
 
-          {/* Desktop Navigation */}
+          {/* Desktop Navigation - trustmarkbenefits.com structure */}
           <div className="hidden lg:flex items-center gap-8" {...inspectorProps({ fieldId: 'items' })}>
-            {items.map((item) => (
-              <NavItem key={item.sys.id} item={item} />
+            {TRUSTMARK_NAV_ITEMS.map((item, i) => (
+              <StaticNavItem key={item.title + i} item={item} />
             ))}
+            <button
+              type="button"
+              className="text-white/90 hover:text-white transition-colors p-1"
+              aria-label="Search"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </button>
           </div>
 
           {/* Mobile menu button */}
@@ -136,11 +183,21 @@ export default function Navigation({ entry }: NavigationProps) {
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-white/20">
+          <div className="lg:hidden py-4 border-t border-white/20 bg-[#001a33]/95 backdrop-blur-sm">
             <div className="flex flex-col gap-2">
-              {items.map((item) => (
-                <NavItem key={item.sys.id} item={item} isMobile />
+              {TRUSTMARK_NAV_ITEMS.map((item, i) => (
+                <StaticNavItem key={item.title + i} item={item} isMobile />
               ))}
+              <button
+                type="button"
+                className="flex items-center gap-2 text-white/90 hover:text-white transition-colors py-2"
+                aria-label="Search"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                Search
+              </button>
             </div>
           </div>
         )}

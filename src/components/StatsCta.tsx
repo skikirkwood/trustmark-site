@@ -20,16 +20,16 @@ export default function StatsCta({ entry }: StatsCtaProps) {
   const buttonLink = data.fields.buttonLink ? String(data.fields.buttonLink) : null;
 
   const contentBlock = (
-    <div className="flex flex-col justify-center px-6 py-12 lg:px-12 lg:py-16 bg-[#006bb6]">
+    <div className="flex flex-col justify-center px-6 py-12 lg:px-12 lg:py-16 bg-white">
       <h2
-        className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-4 leading-tight"
+        className="text-2xl md:text-3xl lg:text-4xl font-bold text-black mb-4 leading-tight"
         {...inspectorProps({ fieldId: 'headline' })}
       >
         {headline}
       </h2>
       {description && (
         <p
-          className="text-lg text-white/90 mb-8"
+          className="text-lg text-black mb-8"
           {...inspectorProps({ fieldId: 'description' })}
         >
           {description}
@@ -38,7 +38,7 @@ export default function StatsCta({ entry }: StatsCtaProps) {
       {buttonText && buttonLink && (
         <Link
           href={buttonLink}
-          className="inline-flex items-center justify-center bg-[#006bb6] border-2 border-white text-white px-6 py-3 font-semibold hover:bg-white hover:text-[#006bb6] transition-colors w-fit"
+          className="inline-flex items-center justify-center bg-[#006bb6] text-white px-6 py-3 font-semibold hover:bg-[#005a9e] transition-colors w-fit"
           {...inspectorProps({ fieldId: 'buttonText' })}
         >
           {buttonText}
@@ -48,12 +48,15 @@ export default function StatsCta({ entry }: StatsCtaProps) {
   );
 
   const imageBlock = imageUrl && (
-    <div className="relative w-full lg:w-1/3 min-h-[250px] lg:min-h-[400px]" {...inspectorProps({ fieldId: 'backgroundImage' })}>
+    <div
+      className={`relative w-full lg:w-1/3 lg:shrink-0 min-h-[250px] lg:min-h-[400px] ${imagePosition === 'right' ? 'order-1 lg:order-2' : ''}`}
+      {...inspectorProps({ fieldId: 'backgroundImage' })}
+    >
       <Image
         src={imageUrl}
         alt=""
         fill
-        className="object-cover"
+        className="object-contain"
         sizes="33vw"
       />
     </div>
@@ -61,34 +64,27 @@ export default function StatsCta({ entry }: StatsCtaProps) {
 
   if (imageUrl) {
     return (
-      <section className="flex flex-col lg:flex-row">
-        {imagePosition === 'left' ? (
-          <>
-            {imageBlock}
-            <div className="flex-1 lg:w-2/3">{contentBlock}</div>
-          </>
-        ) : (
-          <>
-            <div className="flex-1 lg:w-2/3 order-2 lg:order-1">{contentBlock}</div>
-            <div className="lg:w-1/3 order-1 lg:order-2">{imageBlock}</div>
-          </>
-        )}
+      <section className="flex flex-col lg:flex-row w-full">
+        <div className={`flex-1 lg:w-2/3 min-w-0 ${imagePosition === 'right' ? 'order-2 lg:order-1' : ''}`}>
+          {contentBlock}
+        </div>
+        {imageBlock}
       </section>
     );
   }
 
   return (
-    <section className="bg-[#006bb6]">
+    <section className="bg-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20 text-center">
         <h2
-          className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-4 leading-tight"
+          className="text-2xl md:text-3xl lg:text-4xl font-bold text-black mb-4 leading-tight"
           {...inspectorProps({ fieldId: 'headline' })}
         >
           {headline}
         </h2>
         {description && (
           <p
-            className="text-lg text-white/90 mb-8"
+            className="text-lg text-black mb-8"
             {...inspectorProps({ fieldId: 'description' })}
           >
             {description}
@@ -97,7 +93,7 @@ export default function StatsCta({ entry }: StatsCtaProps) {
         {buttonText && buttonLink && (
           <Link
             href={buttonLink}
-            className="inline-flex items-center justify-center bg-[#006bb6] border-2 border-white text-white px-6 py-3 font-semibold hover:bg-white hover:text-[#006bb6] transition-colors"
+            className="inline-flex items-center justify-center bg-[#006bb6] text-white px-6 py-3 font-semibold hover:bg-[#005a9e] transition-colors"
             {...inspectorProps({ fieldId: 'buttonText' })}
           >
             {buttonText}

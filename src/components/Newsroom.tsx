@@ -32,12 +32,12 @@ function NewsItemCard({
   return (
     <article className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow group">
       {imageUrl && (
-        <div className="relative h-48 overflow-hidden">
+        <div className="relative h-48 overflow-hidden bg-gray-50">
           <Image
             src={imageUrl}
             alt={title}
             fill
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            className="object-contain group-hover:scale-105 transition-transform duration-300"
           />
         </div>
       )}
@@ -89,8 +89,9 @@ function NewsroomContent({
   inspectorProps: (opts: { fieldId: string }) => object | null;
 }) {
   const newsroomData = useContentfulLiveUpdates(newsroom);
+  const name = newsroomData?.fields?.name ? String(newsroomData.fields.name) : null;
   const title = newsroomData?.fields?.title ? String(newsroomData.fields.title) : null;
-  const displayTitle = String(sectionTitle ?? title ?? newsroomData?.fields?.name ?? 'Newsroom');
+  const displayTitle = String(sectionTitle ?? title ?? 'Newsroom');
   const newsItems = (newsroomData?.fields?.newsItems || []) as Entry<NewsItemSkeleton>[];
   const defaultImage = getImageUrl(newsroomData?.fields?.defaultImage);
 
@@ -99,7 +100,15 @@ function NewsroomContent({
   return (
     <section className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
+        <div className="text-left mb-12">
+          {name && (
+            <p
+              className="text-[17px] font-light text-[#006bb6] uppercase mb-2"
+              {...inspectorProps({ fieldId: 'name' })}
+            >
+              {name}
+            </p>
+          )}
           <h2
             className="text-3xl font-bold text-gray-900"
             {...inspectorProps({ fieldId: titleFieldId })}

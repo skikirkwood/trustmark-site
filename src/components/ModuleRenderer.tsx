@@ -8,6 +8,7 @@ import {
   isStatsCtaEntry,
   isTestimonialEntry,
   isNewsroomSectionEntry,
+  isNewsroomEntry,
 } from '@/types/contentful';
 import Hero from './Hero';
 import QuickLinks from './QuickLinks';
@@ -56,7 +57,7 @@ export default function ModuleRenderer({ modules }: ModuleRendererProps) {
           return <Testimonial key={key} entry={module} />;
         }
 
-        if (isNewsroomSectionEntry(module)) {
+        if (isNewsroomSectionEntry(module) || isNewsroomEntry(module)) {
           return <Newsroom key={key} entry={module} />;
         }
 
