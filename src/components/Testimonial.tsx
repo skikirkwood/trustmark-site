@@ -17,10 +17,10 @@ export default function Testimonial({ entry }: TestimonialProps) {
   const attribution = data.fields.attribution ? String(data.fields.attribution) : null;
 
   return (
-    <section className="py-16 lg:py-20">
+    <section className="py-8 lg:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div
-          className="relative py-16 lg:py-20"
+          className="relative py-10 lg:py-12"
           style={{
             backgroundColor: 'rgb(255, 194, 38)',
             backgroundImage: backgroundUrl ? `url(${backgroundUrl})` : undefined,
