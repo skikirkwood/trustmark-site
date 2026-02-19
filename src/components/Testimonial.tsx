@@ -32,7 +32,7 @@ export default function Testimonial({ entry }: TestimonialProps) {
           style={{ backgroundColor: 'rgba(255, 194, 38, 0.8)' }}
         />
       )}
-      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {imageUrl && (
           <div
             className="flex justify-center mb-8"
