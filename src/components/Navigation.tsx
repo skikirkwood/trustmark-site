@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useContentfulLiveUpdates, useContentfulInspectorMode } from '@contentful/live-preview/react';
@@ -68,9 +68,10 @@ interface NavigationProps {
 interface StaticNavItemProps {
   item: (typeof TRUSTMARK_NAV_ITEMS)[number];
   isMobile?: boolean;
+  scrolled?: boolean;
 }
 
-function StaticNavItem({ item, isMobile }: StaticNavItemProps) {
+function StaticNavItem({ item, isMobile, scrolled }: StaticNavItemProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { title, link = '#', children, isButton } = item;
   const hasChildren = children && children.length > 0;
@@ -95,7 +96,9 @@ function StaticNavItem({ item, isMobile }: StaticNavItemProps) {
       >
         <button
           onClick={() => isMobile && setIsOpen(!isOpen)}
-          className="flex items-center gap-1 text-white/90 hover:text-white transition-colors font-medium py-2"
+          className={`flex items-center gap-1 font-medium py-2 transition-colors ${
+            scrolled ? 'text-[#006bb6] hover:text-[#005a9e]' : 'text-white/90 hover:text-white'
+          }`}
         >
           {title}
           <svg className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -116,23 +119,42 @@ function StaticNavItem({ item, isMobile }: StaticNavItemProps) {
   }
 
   return (
-    <Link href={link} className="text-white/90 hover:text-white transition-colors font-medium py-2">
+    <Link
+      href={link}
+      className={`font-medium py-2 transition-colors ${
+        scrolled ? 'text-[#006bb6] hover:text-[#005a9e]' : 'text-white/90 hover:text-white'
+      }`}
+    >
       {title}
     </Link>
   );
 }
 
+const SCROLL_THRESHOLD = 50;
+
 export default function Navigation({ entry }: NavigationProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const data = useContentfulLiveUpdates(entry);
   const inspectorProps = useContentfulInspectorMode({ entryId: entry.sys.id });
-  
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > SCROLL_THRESHOLD);
+    handleScroll(); // Check initial position (e.g. if page loads scrolled)
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const logoUrl =
     'https://marvel-b1-cdn.bc0a.com/f00000000221956/trustmarkbenefits.com/Trustmark-Benefits-Web/media/Trustmark-Logos/logo-with-tagline-inverse.png';
   const name = String(data.fields.name || '');
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-black/50 to-transparent">
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-200 ${
+        scrolled ? 'bg-white shadow-sm' : 'bg-gradient-to-b from-black/50 to-transparent'
+      }`}
+    >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -143,21 +165,21 @@ export default function Navigation({ entry }: NavigationProps) {
                 alt={name}
                 width={150}
                 height={40}
-                className="h-10 w-auto"
+                className={`h-10 w-auto transition-opacity duration-200 ${scrolled ? 'invert' : ''}`}
               />
             ) : (
-              <span className="text-2xl font-bold text-white">{name}</span>
+              <span className={`text-2xl font-bold ${scrolled ? 'text-[#001a33]' : 'text-white'}`}>{name}</span>
             )}
           </Link>
 
           {/* Desktop Navigation - trustmarkbenefits.com structure */}
           <div className="hidden lg:flex items-center gap-8" {...inspectorProps({ fieldId: 'items' })}>
             {TRUSTMARK_NAV_ITEMS.map((item, i) => (
-              <StaticNavItem key={item.title + i} item={item} />
+              <StaticNavItem key={item.title + i} item={item} scrolled={scrolled} />
             ))}
             <button
               type="button"
-              className="text-white/90 hover:text-white transition-colors p-1"
+              className={`transition-colors p-1 ${scrolled ? 'text-[#006bb6] hover:text-[#005a9e]' : 'text-white/90 hover:text-white'}`}
               aria-label="Search"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -168,7 +190,7 @@ export default function Navigation({ entry }: NavigationProps) {
 
           {/* Mobile menu button */}
           <button
-            className="lg:hidden p-2 text-white"
+            className={`lg:hidden p-2 transition-colors ${scrolled ? 'text-[#006bb6]' : 'text-white'}`}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -186,7 +208,7 @@ export default function Navigation({ entry }: NavigationProps) {
           <div className="lg:hidden py-4 border-t border-white/20 bg-[#001a33]/95 backdrop-blur-sm">
             <div className="flex flex-col gap-2">
               {TRUSTMARK_NAV_ITEMS.map((item, i) => (
-                <StaticNavItem key={item.title + i} item={item} isMobile />
+                <StaticNavItem key={item.title + i} item={item} isMobile scrolled={false} />
               ))}
               <button
                 type="button"
