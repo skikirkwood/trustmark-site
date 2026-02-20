@@ -9,6 +9,7 @@ import {
   isTestimonialEntry,
   isNewsroomSectionEntry,
   isNewsroomEntry,
+  isExternalAssetWrapperEntry,
 } from '@/types/contentful';
 import Hero from './Hero';
 import QuickLinks from './QuickLinks';
@@ -18,6 +19,7 @@ import ArticleGrid from './ArticleGrid';
 import StatsCta from './StatsCta';
 import Testimonial from './Testimonial';
 import Newsroom from './Newsroom';
+import ExternalAssetWrapper from './ExternalAssetWrapper';
 
 interface ModuleRendererProps {
   modules: ModuleEntry[];
@@ -59,6 +61,10 @@ export default function ModuleRenderer({ modules }: ModuleRendererProps) {
 
         if (isNewsroomSectionEntry(module) || isNewsroomEntry(module)) {
           return <Newsroom key={key} entry={module} />;
+        }
+
+        if (isExternalAssetWrapperEntry(module)) {
+          return <ExternalAssetWrapper key={key} entry={module} />;
         }
 
         // Unknown module type - log warning in development

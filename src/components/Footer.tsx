@@ -64,7 +64,7 @@ export default function Footer({ entry }: FooterProps) {
               )}
             </div>
             <p className="mt-4 text-gray-400 text-sm max-w-md">
-              Helping you achieve your financial goals with trusted banking services and expert guidance.
+              Empowering you and your employees with innovative benefits solutions for a healthier, more secure future.
             </p>
             
             {/* Social links */}

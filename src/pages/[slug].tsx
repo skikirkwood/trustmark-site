@@ -2,8 +2,9 @@ import { GetStaticProps, GetStaticPaths } from 'next';
 import Head from 'next/head';
 import { useContentfulLiveUpdates } from '@contentful/live-preview/react';
 import { getPageBySlug, getAllPages } from '@/lib/contentful';
-import { ModuleEntry, NavigationEntry, FooterEntry } from '@/types/contentful';
-import { Navigation, Footer, ModuleRenderer } from '@/components';
+import { ModuleEntry, NavigationEntry, FooterEntry, FaqSkeleton } from '@/types/contentful';
+import { Entry } from 'contentful';
+import { Navigation, Footer, ModuleRenderer, FaqSection } from '@/components';
 
 interface PageProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -28,6 +29,7 @@ export default function Page({ page: initialPage, preview }: PageProps) {
   const slug = String(page.fields.slug || '');
   const navigation = page.fields.navigation as NavigationEntry | undefined;
   const modules = (page.fields.modules || []) as ModuleEntry[];
+  const relatedFaQs = (page.fields.relatedFaQs || []) as Entry<FaqSkeleton>[];
   const footer = page.fields.footer as FooterEntry | undefined;
 
   return (
@@ -56,6 +58,7 @@ export default function Page({ page: initialPage, preview }: PageProps) {
 
         <main className="flex-grow">
           <ModuleRenderer modules={modules} />
+          {relatedFaQs.length > 0 && <FaqSection faqs={relatedFaQs} />}
         </main>
 
         {footer && <Footer entry={footer} />}
