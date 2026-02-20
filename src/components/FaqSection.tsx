@@ -15,7 +15,7 @@ function FaqItem({ faq, isOpen, onToggle }: { faq: FaqEntry; isOpen: boolean; on
   const data = useContentfulLiveUpdates(faq);
   const inspectorProps = useContentfulInspectorMode({ entryId: faq.sys.id });
 
-  const question = data?.fields?.question ?? '';
+  const question = data?.fields?.question ? String(data.fields.question) : '';
   const answer = data?.fields?.answer as unknown as Document | undefined;
   const hasAnswer = answer?.content && answer.content.length > 0;
 
