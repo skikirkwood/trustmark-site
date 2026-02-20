@@ -38,7 +38,8 @@ export default function Page({ page: initialPage, preview }: PageProps) {
   const slug = String(page.fields.slug || '');
   const navigation = page.fields.navigation as NavigationEntry | undefined;
   const modules = (page.fields.modules || []) as ModuleEntry[];
-  const relatedFaQs = (page.fields.relatedFaQs || []) as Entry<FaqSkeleton>[];
+  const relatedFaq = page.fields.relatedFaq as Entry<FaqSkeleton> | undefined;
+  const relatedFaQs = relatedFaq ? [relatedFaq] : [];
   const footer = page.fields.footer as FooterEntry | undefined;
 
   return (

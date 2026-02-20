@@ -1,4 +1,5 @@
 import { Entry, EntrySkeletonType } from 'contentful';
+import { Document } from '@contentful/rich-text-types';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ContentfulAsset = any;
@@ -319,8 +320,7 @@ export type FooterEntry = Entry<FooterSkeleton>;
 export interface FaqFields {
   faqName: string;
   question: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  answer: any;
+  answer: Document;
 }
 
 export interface FaqSkeleton extends EntrySkeletonType {
@@ -347,7 +347,7 @@ export interface PageFields {
     | Entry<NewsroomSkeleton>
     | Entry<ExternalAssetWrapperSkeleton>
   )[];
-  relatedFaQs?: Entry<FaqSkeleton>[];
+  relatedFaq?: Entry<FaqSkeleton>;
   footer?: Entry<FooterSkeleton>;
 }
 

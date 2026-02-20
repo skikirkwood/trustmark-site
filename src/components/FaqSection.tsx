@@ -15,16 +15,9 @@ function FaqItem({ faq, isOpen, onToggle }: { faq: FaqEntry; isOpen: boolean; on
   const data = useContentfulLiveUpdates(faq);
   const inspectorProps = useContentfulInspectorMode({ entryId: faq.sys.id });
 
-  const question = data?.fields?.question ? String(data.fields.question) : '';
-  const answer = data?.fields?.answer;
-
-  const hasAnswer =
-    answer &&
-    typeof answer === 'object' &&
-    'nodeType' in answer &&
-    answer.nodeType === 'document' &&
-    Array.isArray((answer as { content?: unknown[] }).content) &&
-    (answer as { content: unknown[] }).content.length > 0;
+  const question = data?.fields?.question ?? '';
+  const answer = data?.fields?.answer as unknown as Document | undefined;
+  const hasAnswer = answer?.content && answer.content.length > 0;
 
   return (
     <div className="border-b border-gray-200 last:border-b-0">
