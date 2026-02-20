@@ -3,8 +3,9 @@ import Head from 'next/head';
 import { useContentfulLiveUpdates } from '@contentful/live-preview/react';
 import { getPageBySlug } from '@/lib/contentful';
 import { getAllExperiences, getAllAudiences } from '@/lib/ninetailed';
-import { ModuleEntry, NavigationEntry, FooterEntry } from '@/types/contentful';
-import { Navigation, Footer, ModuleRenderer } from '@/components';
+import { ModuleEntry, NavigationEntry, FooterEntry, FaqSkeleton } from '@/types/contentful';
+import { Entry } from 'contentful';
+import { Navigation, Footer, ModuleRenderer, FaqSection } from '@/components';
 
 interface HomePageProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -46,6 +47,7 @@ export default function HomePage({ page: initialPage, preview }: HomePageProps) 
   const title = String(page.fields.title || '');
   const navigation = page.fields.navigation as NavigationEntry | undefined;
   const modules = (page.fields.modules || []) as ModuleEntry[];
+  const relatedFaQs = (page.fields.relatedFaQs || []) as Entry<FaqSkeleton>[];
   const footer = page.fields.footer as FooterEntry | undefined;
 
   return (
@@ -77,6 +79,7 @@ export default function HomePage({ page: initialPage, preview }: HomePageProps) 
         {/* Main content */}
         <main className="flex-grow">
           <ModuleRenderer modules={modules} />
+          {relatedFaQs.length > 0 && <FaqSection faqs={relatedFaQs} />}
         </main>
 
         {/* Footer */}

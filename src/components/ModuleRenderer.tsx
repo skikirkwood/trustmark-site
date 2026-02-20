@@ -10,6 +10,7 @@ import ArticleGrid from './ArticleGrid';
 import StatsCta from './StatsCta';
 import Testimonial from './Testimonial';
 import Newsroom from './Newsroom';
+import ExternalAssetWrapper from './ExternalAssetWrapper';
 
 const ContentTypeMap: Record<string, React.ComponentType<any>> = {
   hero: Hero,
@@ -21,6 +22,7 @@ const ContentTypeMap: Record<string, React.ComponentType<any>> = {
   testimonial: Testimonial,
   newsroomSection: Newsroom,
   newsroom: Newsroom,
+  externalAssetWrapper: ExternalAssetWrapper,
 };
 
 const ComponentRenderer = (props: any) => {

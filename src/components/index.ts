@@ -9,3 +9,4 @@ export { default as StatsCta } from './StatsCta';
 export { default as Testimonial } from './Testimonial';
 export { default as Footer } from './Footer';
 export { default as ModuleRenderer } from './ModuleRenderer';
+export { default as FaqSection } from './FaqSection';

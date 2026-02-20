@@ -255,6 +255,44 @@ export interface TestimonialSkeleton extends EntrySkeletonType {
 
 export type TestimonialEntry = Entry<TestimonialSkeleton>;
 
+// External Asset Wrapper (Cloudinary)
+export interface CloudinaryAssetMetadata {
+  alt_text?: string;
+  [key: string]: string | undefined;
+}
+
+export interface CloudinaryAsset {
+  url: string;
+  secure_url: string;
+  original_url?: string;
+  original_secure_url?: string;
+  original_transformed_url?: string;
+  raw_transformation?: string;
+  public_id: string;
+  resource_type: string;
+  type: string;
+  format: string;
+  width?: number;
+  height?: number;
+  bytes?: number;
+  version?: number;
+  duration?: number | null;
+  created_at?: string;
+  metadata?: CloudinaryAssetMetadata;
+}
+
+export interface ExternalAssetWrapperFields {
+  internalName?: string;
+  externalAsset?: CloudinaryAsset | CloudinaryAsset[];
+}
+
+export interface ExternalAssetWrapperSkeleton extends EntrySkeletonType {
+  contentTypeId: 'externalAssetWrapper';
+  fields: ExternalAssetWrapperFields;
+}
+
+export type ExternalAssetWrapperEntry = Entry<ExternalAssetWrapperSkeleton>;
+
 // Footer
 export interface FooterLinkColumn {
   title: string;
@@ -277,6 +315,21 @@ export interface FooterSkeleton extends EntrySkeletonType {
 
 export type FooterEntry = Entry<FooterSkeleton>;
 
+// FAQ
+export interface FaqFields {
+  faqName: string;
+  question: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  answer: any;
+}
+
+export interface FaqSkeleton extends EntrySkeletonType {
+  contentTypeId: 'faq';
+  fields: FaqFields;
+}
+
+export type FaqEntry = Entry<FaqSkeleton>;
+
 // Page
 export interface PageFields {
   title: string;
@@ -292,7 +345,9 @@ export interface PageFields {
     | Entry<TestimonialSkeleton>
     | Entry<NewsroomSectionSkeleton>
     | Entry<NewsroomSkeleton>
+    | Entry<ExternalAssetWrapperSkeleton>
   )[];
+  relatedFaQs?: Entry<FaqSkeleton>[];
   footer?: Entry<FooterSkeleton>;
 }
 
@@ -313,7 +368,8 @@ export type ModuleEntry =
   | StatsCtaEntry
   | TestimonialEntry
   | NewsroomSectionEntry
-  | NewsroomEntry;
+  | NewsroomEntry
+  | ExternalAssetWrapperEntry;
 
 // Type guard helpers
 export function isHeroEntry(entry: ModuleEntry): entry is HeroEntry {
@@ -350,4 +406,8 @@ export function isNewsroomSectionEntry(entry: ModuleEntry): entry is NewsroomSec
 
 export function isNewsroomEntry(entry: ModuleEntry): entry is NewsroomEntry {
   return entry.sys.contentType?.sys.id === 'newsroom';
+}
+
+export function isExternalAssetWrapperEntry(entry: ModuleEntry): entry is ExternalAssetWrapperEntry {
+  return entry.sys.contentType?.sys.id === 'externalAssetWrapper';
 }
