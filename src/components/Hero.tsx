@@ -5,7 +5,8 @@ import { HeroEntry, HeroSlideEntry } from '@/types/contentful';
 import { getImageUrl } from '@/lib/contentful';
 
 interface HeroProps {
-  entry: HeroEntry;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  entry: HeroEntry | any;
 }
 
 const HERO_SLIDE_INTERVAL = 6000;

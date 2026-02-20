@@ -2,6 +2,7 @@ import { GetStaticProps, GetStaticPaths } from 'next';
 import Head from 'next/head';
 import { useContentfulLiveUpdates } from '@contentful/live-preview/react';
 import { getPageBySlug, getAllPages } from '@/lib/contentful';
+import { getAllExperiences, getAllAudiences } from '@/lib/ninetailed';
 import { ModuleEntry, NavigationEntry, FooterEntry } from '@/types/contentful';
 import { Navigation, Footer, ModuleRenderer } from '@/components';
 
@@ -9,6 +10,14 @@ interface PageProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   page: any;
   preview: boolean;
+  ninetailed?: {
+    preview: {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      allExperiences: any[];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      allAudiences: any[];
+    };
+  };
 }
 
 export default function Page({ page: initialPage, preview }: PageProps) {
@@ -91,10 +100,21 @@ export const getStaticProps: GetStaticProps<PageProps> = async ({ params, previe
     };
   }
 
+  const [allExperiences, allAudiences] = await Promise.all([
+    getAllExperiences(preview),
+    getAllAudiences(preview),
+  ]);
+
   return {
     props: {
       page,
       preview,
+      ninetailed: {
+        preview: {
+          allExperiences,
+          allAudiences,
+        },
+      },
     },
     revalidate: 5,
   };

@@ -11,6 +11,10 @@
   "dependencies": {
     "@contentful/live-preview": "^4.9.2",
     "@contentful/rich-text-react-renderer": "^16.1.6",
+    "@ninetailed/experience.js-next": "^7.20.6",
+    "@ninetailed/experience.js-plugin-insights": "^7.20.6",
+    "@ninetailed/experience.js-plugin-preview": "^7.20.6",
+    "@ninetailed/experience.js-utils-contentful": "^7.20.6",
     "contentful": "^11.10.3",
     "contentful-management": "^11.69.1",
     "next": "16.1.6",

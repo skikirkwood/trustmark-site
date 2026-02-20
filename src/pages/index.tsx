@@ -2,6 +2,7 @@ import { GetStaticProps } from 'next';
 import Head from 'next/head';
 import { useContentfulLiveUpdates } from '@contentful/live-preview/react';
 import { getPageBySlug } from '@/lib/contentful';
+import { getAllExperiences, getAllAudiences } from '@/lib/ninetailed';
 import { ModuleEntry, NavigationEntry, FooterEntry } from '@/types/contentful';
 import { Navigation, Footer, ModuleRenderer } from '@/components';
 
@@ -9,6 +10,14 @@ interface HomePageProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   page: any;
   preview: boolean;
+  ninetailed?: {
+    preview: {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      allExperiences: any[];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      allAudiences: any[];
+    };
+  };
 }
 
 export default function HomePage({ page: initialPage, preview }: HomePageProps) {
@@ -80,11 +89,22 @@ export default function HomePage({ page: initialPage, preview }: HomePageProps) 
 export const getStaticProps: GetStaticProps<HomePageProps> = async ({ preview = false }) => {
   const page = await getPageBySlug('home', preview);
 
+  const [allExperiences, allAudiences] = await Promise.all([
+    getAllExperiences(preview),
+    getAllAudiences(preview),
+  ]);
+
   return {
     props: {
       page: page || null,
       preview,
+      ninetailed: {
+        preview: {
+          allExperiences,
+          allAudiences,
+        },
+      },
     },
-    revalidate: 5, // Short revalidation for quick updates
+    revalidate: 5,
   };
 };

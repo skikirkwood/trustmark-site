@@ -1,15 +1,7 @@
-import {
-  ModuleEntry,
-  isHeroEntry,
-  isQuickLinksEntry,
-  isFeatureCardsSectionEntry,
-  isCtaBannerEntry,
-  isArticleGridEntry,
-  isStatsCtaEntry,
-  isTestimonialEntry,
-  isNewsroomSectionEntry,
-  isNewsroomEntry,
-} from '@/types/contentful';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React from 'react';
+import { ModuleEntry } from '@/types/contentful';
+import { Experience, ExperienceMapper } from '@/lib/ninetailed';
 import Hero from './Hero';
 import QuickLinks from './QuickLinks';
 import FeatureCards from './FeatureCards';
@@ -19,6 +11,43 @@ import StatsCta from './StatsCta';
 import Testimonial from './Testimonial';
 import Newsroom from './Newsroom';
 
+const ContentTypeMap: Record<string, React.ComponentType<any>> = {
+  hero: Hero,
+  quickLinks: QuickLinks,
+  featureCardsSection: FeatureCards,
+  ctaBanner: CtaBanner,
+  articleGrid: ArticleGrid,
+  statsCta: StatsCta,
+  testimonial: Testimonial,
+  newsroomSection: Newsroom,
+  newsroom: Newsroom,
+};
+
+const ComponentRenderer = (props: any) => {
+  const contentTypeId = props.sys?.contentType?.sys?.id;
+  const Component = contentTypeId ? ContentTypeMap[contentTypeId] : null;
+
+  if (!Component) {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(`Unknown module type: ${contentTypeId}`);
+    }
+    return null;
+  }
+
+  return <Component entry={props} />;
+};
+
+function parseExperiences(entry: any) {
+  const ntExperiences = entry?.fields?.nt_experiences;
+  if (!Array.isArray(ntExperiences) || ntExperiences.length === 0) {
+    return [];
+  }
+
+  return ntExperiences
+    .filter((exp: any) => ExperienceMapper.isExperienceEntry(exp))
+    .map((exp: any) => ExperienceMapper.mapExperience(exp));
+}
+
 interface ModuleRendererProps {
   modules: ModuleEntry[];
 }
@@ -27,47 +56,18 @@ export default function ModuleRenderer({ modules }: ModuleRendererProps) {
   return (
     <>
       {modules.map((module) => {
-        const key = module.sys.id;
+        const { id } = module.sys;
+        const parsedExperiences = parseExperiences(module);
 
-        if (isHeroEntry(module)) {
-          return <Hero key={key} entry={module} />;
-        }
-
-        if (isQuickLinksEntry(module)) {
-          return <QuickLinks key={key} entry={module} />;
-        }
-
-        if (isFeatureCardsSectionEntry(module)) {
-          return <FeatureCards key={key} entry={module} />;
-        }
-
-        if (isCtaBannerEntry(module)) {
-          return <CtaBanner key={key} entry={module} />;
-        }
-
-        if (isArticleGridEntry(module)) {
-          return <ArticleGrid key={key} entry={module} />;
-        }
-
-        if (isStatsCtaEntry(module)) {
-          return <StatsCta key={key} entry={module} />;
-        }
-
-        if (isTestimonialEntry(module)) {
-          return <Testimonial key={key} entry={module} />;
-        }
-
-        if (isNewsroomSectionEntry(module) || isNewsroomEntry(module)) {
-          return <Newsroom key={key} entry={module} />;
-        }
-
-        // Unknown module type - log warning in development
-        if (process.env.NODE_ENV === 'development') {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          console.warn(`Unknown module type: ${(module as any).sys?.contentType?.sys?.id}`);
-        }
-
-        return null;
+        return (
+          <Experience
+            key={id}
+            id={id}
+            component={ComponentRenderer}
+            experiences={parsedExperiences}
+            {...module}
+          />
+        );
       })}
     </>
   );
